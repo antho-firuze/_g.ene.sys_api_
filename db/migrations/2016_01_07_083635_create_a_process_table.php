@@ -14,7 +14,7 @@ class CreateAProcessTable extends Migration
     {
         Schema::create('a_process', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('client_id');
+            $table->integer('client_id')->default(0);
             $table->integer('org_id')->default(0);
 			$table->char('is_active', 1)->default('1');
 			$table->char('is_deleted', 1)->default('0');

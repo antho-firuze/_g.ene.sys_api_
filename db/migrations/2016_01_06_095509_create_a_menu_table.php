@@ -14,7 +14,7 @@ class CreateAMenuTable extends Migration
     {
         Schema::create('a_menu', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('client_id');
+            $table->integer('client_id')->default(0);
             $table->integer('org_id')->default(0);
 			$table->char('is_active', 1)->default('1');
 			$table->char('is_deleted', 1)->default('0');
@@ -31,10 +31,7 @@ class CreateAMenuTable extends Migration
 			$table->text('description')->nullable();
 			$table->char('is_parent', 1)->default('0');
             $table->integer('parent_id')->nullable();
-            $table->integer('action_id')->nullable();
-            $table->integer('window_id')->nullable();
-            $table->integer('form_id')->nullable();
-            $table->integer('process_id')->nullable();
+            $table->string('path', 255);
         });
     }
 

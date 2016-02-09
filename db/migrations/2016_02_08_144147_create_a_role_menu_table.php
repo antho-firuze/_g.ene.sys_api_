@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAProcessAccessTable extends Migration
+class CreateARoleMenuTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,12 +12,10 @@ class CreateAProcessAccessTable extends Migration
      */
     public function up()
     {
-        Schema::create('a_process_access', function (Blueprint $table) {
+        Schema::create('a_role_menu', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('client_id');
-            $table->integer('org_id');
             $table->integer('role_id');
-            $table->integer('process_id');
+            $table->integer('menu_id');
 			$table->char('is_active', 1)->default('1');
 			$table->char('is_deleted', 1)->default('0');
             $table->integer('created_by')->nullable();
@@ -26,8 +24,6 @@ class CreateAProcessAccessTable extends Migration
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
 			$table->timestamp('deleted_at')->nullable();
-
-			$table->char('execute', 1)->default('1');
         });
     }
 
@@ -38,6 +34,6 @@ class CreateAProcessAccessTable extends Migration
      */
     public function down()
     {
-        Schema::drop('a_process_access');
+        //
     }
 }
