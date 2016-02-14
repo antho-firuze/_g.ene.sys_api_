@@ -17,7 +17,7 @@ class System extends REST_Controller {
 		// ADDITIONAL KEY
 		$apps_key  	= $this->input->get_request_header('Application-Key');
 		if (! $result = $this->db->where('api_token', $apps_key)->get('a_system')->row() ) 
-			$this->response(['status' => FALSE, 'error' => 'What are you doing...?'], 400);
+			$this->response(['status' => FALSE, 'message' => 'What are you doing...?'], 400);
 
 		// BASIC AUTH
         $username = $this->input->server('PHP_AUTH_USER');
@@ -35,7 +35,9 @@ class System extends REST_Controller {
             }
         }
 		if (! $id = $this->auth->login($username, $password))
-			$this->response(['status' => FALSE, 'error' => 'Incorrect Username & Password !'], 401);
+		{
+			$this->response(['status' => FALSE, 'message' => $this->auth->errors()], 401);
+		}
 		
 		$user = $this->db->get_where('a_user', ['id'=>$id])->row();
 		$GLOBALS['identifier'] = [
@@ -134,7 +136,7 @@ class System extends REST_Controller {
 		$data->updated_at = date('Y-m-d H:i:s');
 		
 		if (! $this->system_model->updateUser($data, ['id'=>$arg->id]))
-			$this->xresponse(FALSE, ['error' => $this->db->error()->message], 401);
+			$this->xresponse(FALSE, ['message' => $this->db->error()->message], 401);
 			
 		$this->xresponse(TRUE);
 	}

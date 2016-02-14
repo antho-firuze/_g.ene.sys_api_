@@ -420,8 +420,7 @@ class Auth_model extends CI_Model
 			// Hash something anyway, just to take up time
 			// $this->hash_password($password);
 
-			// $this->set_error('login_timeout');
-
+			$this->set_error('login_timeout');
 			return FALSE;
 		}
 
@@ -431,8 +430,7 @@ class Auth_model extends CI_Model
 
 			if ($user->is_active == 0)
 			{
-				// $this->set_error('login_unsuccessful_not_active');
-
+				$this->set_error('login_unsuccessful_not_active');
 				return FALSE;
 			}
 			
@@ -445,21 +443,16 @@ class Auth_model extends CI_Model
 
 				$this->clear_login_attempts($identity);
 
-				// $this->set_message('login_successful');
-				
-				// $GLOBALS['auth'][$this->config->item('identity_id', 'auth')] = $user->id;
-
-				// return TRUE;
 				return $user->id;
 			}
 		}
 
 		// Hash something anyway, just to take up time
-		// $this->hash_password($password);
+		$this->hash_password($password);
 
 		$this->increase_login_attempts($identity);
 
-		// $this->set_error('login_unsuccessful');
+		$this->set_error('login_unsuccessful');
 
 		return FALSE;
 	}

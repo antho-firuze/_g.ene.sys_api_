@@ -2164,10 +2164,10 @@ abstract class REST_Controller extends CI_Controller {
 		// CREATE TOKEN
 		$this->load->library('z_jwt/jwt');
 		try {
-			$token['Token-Key'] = $this->jwt->createToken($GLOBALS['identifier']);
+			$token['token'] = $this->jwt->createToken($GLOBALS['identifier']);
 			
 		} catch (Exception $e) {
-			$this->response(['status' => FALSE, 'error' => $e->getMessage()], 500);
+			$this->response(['status' => FALSE, 'message' => $e->getMessage()], 500);
 		}
 		
 		
@@ -2187,7 +2187,7 @@ abstract class REST_Controller extends CI_Controller {
 	{
 		$this->load->library('z_jwt/jwt');
 		
-		$jwt = $this->input->server('HTTP_TOKEN_KEY');
+		$jwt = $this->input->server('HTTP_TOKEN');
 		try {
 			$data = $this->jwt->checkToken($jwt);
 			$GLOBALS['identifier'] = [
@@ -2197,7 +2197,7 @@ abstract class REST_Controller extends CI_Controller {
 				'role_id'	=> $data->role_id
 			];
 		} catch (Exception $e) {
-			$this->response(['status' => FALSE, 'error' => $e->getMessage()], 401);
+			$this->response(['status' => FALSE, 'message' => $e->getMessage()], 401);
 		}
 		return $data;
 	}

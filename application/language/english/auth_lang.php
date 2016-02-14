@@ -41,7 +41,7 @@ $lang['activation_email_unsuccessful']       = 'Unable to Send Activation Email'
 $lang['login_successful']                    = 'Logged In Successfully';
 $lang['login_unsuccessful']                  = 'Incorrect Login';
 $lang['login_unsuccessful_not_active']       = 'Account is inactive';
-$lang['login_timeout']                       = 'Temporarily Locked Out.  Try again later.';
+$lang['login_timeout']                       = 'Account Temporarily Blocked. Try again later.';
 $lang['logout_successful']                   = 'Logged Out Successfully';
 
 // Account Changes
