@@ -2164,7 +2164,8 @@ abstract class REST_Controller extends CI_Controller {
 		// CREATE TOKEN
 		$this->load->library('z_jwt/jwt');
 		try {
-			$token['token'] = $this->jwt->createToken($GLOBALS['identifier']);
+			$token['token']  = $this->jwt->createToken($GLOBALS['identifier']);
+			$token['expire'] = $GLOBALS['identifier']['exp'];
 			
 		} catch (Exception $e) {
 			$this->response(['status' => FALSE, 'message' => $e->getMessage()], 500);

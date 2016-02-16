@@ -1,11 +1,30 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+if ( ! function_exists('urlsafeB64Encode'))
+{
+	function urlsafeB64Encode($input)
+	{
+		return str_replace('=', '', strtr(base64_encode($input), '+/', '-_'));
+	}
+}
+
+if ( ! function_exists('urlsafeB64Decode'))
+{
+	function urlsafeB64Decode($input)
+	{
+		$remainder = strlen($input) % 4;
+		if ($remainder) {
+			$padlen = 4 - $remainder;
+			$input .= str_repeat('=', $padlen);
+		}
+		return base64_decode(strtr($input, '-_', '+/'));
+	}
+}
+
 if ( ! function_exists('get_api_sig'))
 {
     function get_api_sig(){
-		// apiKey generator
-		$apiKey = "apikey";
-		$secretKey = "secretkey";
+		$secretKey = "BismILLAHirrohmaanirrohiim";
 
 		// Generates a random string of ten digits
 		$salt = mt_rand();
@@ -295,21 +314,6 @@ if ( ! function_exists('time_passed'))
 	}
 }
 
-// function test($ts){
-    // echo time_passed($ts) . '<br />';
-// } 
-// test(time());
-// test(time()-33);
-// test(time()-(60*17));
-// test(time()-((60*60*2) + (60*55)));
-// test(time()-(60*60*3+60));
-// test(strtotime('-1 day'));
-// test(strtotime('-13 days'));
-// test(strtotime('-25 days'));
-// test(strtotime('July 23 2009'));
-// test(strtotime('November 18 1999'));
-// test(strtotime('March 1 1937'));
-
 // MAIL
 if ( ! function_exists('send_mail'))
 {
@@ -374,30 +378,6 @@ if ( ! function_exists('get_comet'))
 	}
 }
 	
-if ( ! function_exists('getCompany_Branch'))
-{
-	function getCompany_Branch($company_id=NULL, $branch_id=NULL) {
-		$ci = get_instance();
-		
-		$ci->load->model('systems/systems_model');
-		$company_id = empty($company_id) ? $ci->session->userdata('company_id') : $company_id;
-		$branch_id = empty($branch_id) ? $ci->session->userdata('branch_id') : $branch_id;
-		return empty( $result = $ci->systems_model->getCompany_Branch($company_id, $branch_id) ) ? '' : $result;
-	}
-}
-
-if ( ! function_exists('getCompany_Branch_Bank'))
-{
-	function getCompany_Branch_Bank($company_id=NULL, $branch_id=NULL) {
-		$ci = get_instance();
-		
-		$ci->load->model('systems/systems_model');
-		$company_id = empty($company_id) ? $ci->session->userdata('company_id') : $company_id;
-		$branch_id = empty($branch_id) ? $ci->session->userdata('branch_id') : $branch_id;
-		return empty( $result = $ci->systems_model->getCompany_Branch($company_id, $branch_id) ) ? '' : $result->bank;
-	}
-}
-
 // EXPORT TO EXCELL ===============
 if ( ! function_exists('export_to_xls'))
 {
@@ -589,90 +569,6 @@ if ( ! function_exists('export_to_pdf'))
 		
 		// $mpdf->Output();
 		$mpdf->Output($filename.'.pdf','D');
-	}
-}
-
-// SESSION DATA ===================
-if ( ! function_exists('sesUser'))
-{
-	function sesUser($more=TRUE) {
-		$ci = get_instance();
-		
-		if ($more)
-		{
-			$ci->load->model('systems/systems_model');
-			return $ci->systems_model->getUsers_ById($ci->session->userdata('user_id'));
-		}
-		return $ci->session->userdata('user_id');
-	}
-}
-
-if ( ! function_exists('sesCompany'))
-{
-	function sesCompany($company_id=TRUE) {
-		$ci = get_instance();
-		
-		if (!empty($company_id)) {
-			if ($company_id===TRUE)
-			{
-				$ci->load->model('systems/systems_model');
-				return $ci->systems_model->getCompany_ById($ci->session->userdata('company_id'));
-			} elseif ($company_id) {
-				$ci->load->model('systems/systems_model');
-				return $ci->systems_model->getCompany_ById($company_id);
-			}
-		} else {
-			return $ci->session->userdata('company_id');
-		} 
-		// return $ci->session->userdata('company_id');
-	}
-}
-
-if ( ! function_exists('sesBranch'))
-{
-	function sesBranch($more=TRUE) {
-		$ci = get_instance();
-		
-		if ($more)
-		{
-			$ci->load->model('systems/systems_model');
-			return $ci->systems_model->getBranch_ById($ci->session->userdata('branch_id'));
-		}
-		return $ci->session->userdata('branch_id');
-	}
-}
-
-if ( ! function_exists('sesDepartment'))
-{
-	function sesDepartment($more=TRUE) {
-		$ci = get_instance();
-		
-		if ($more)
-		{
-			$ci->load->model('systems/systems_model');
-			return $ci->systems_model->getDepartment_ById($ci->session->userdata('department_id'));
-		}
-		return $ci->session->userdata('department_id');
-	}
-}
-
-if ( ! function_exists('title_case'))
-{
-	function title_case($string, $exceptions = array()) {
-		$words = explode(" ", $string);
-		$newwords = array();
-
-		foreach ($words as $word)
-		{
-			if (!in_array($word, $exceptions)) {
-				$word = strtolower($word);
-				$word = ucfirst($word);
-			}
-			array_push($newwords, $word);
-
-		}
-
-		return ucfirst(join(" ", $newwords));
 	}
 }
 
@@ -1147,128 +1043,7 @@ if ( ! function_exists('set_datetime_weekday'))
 	}
 }
 
-// USER ========================================
-if ( ! function_exists('get_default_user_company'))
-{
-	function get_default_user_company($user_id=NULL) {
-		$ci = get_instance();
-		
-		$ci->db->select('company_id');
-		$ci->db->from('users_company');
-		$ci->db->where('user_id', (empty($user_id) ? $this->session->userdata('user_id') : $user_id));
-		$ci->db->order_by('user_id, id');
-		return $ci->db->get()->row()->company_id;
-	}
-}
-
-if ( ! function_exists('get_default_user_branch'))
-{
-	function get_default_user_branch($user_id=NULL) {
-		$ci = get_instance();
-		
-		$ci->db->select('branch_id');
-		$ci->db->from('users_branch');
-		$ci->db->where('user_id', (empty($user_id) ? $this->session->userdata('user_id') : $user_id));
-		$ci->db->order_by('user_id, id');
-		return $ci->db->get()->row()->branch_id;
-	}
-}
-
-if ( ! function_exists('get_default_user_department'))
-{
-	function get_default_user_department($user_id=NULL) {
-		$ci = get_instance();
-		
-		$ci->db->select('department_id');
-		$ci->db->from('users_department');
-		$ci->db->where('user_id', (empty($user_id) ? $this->session->userdata('user_id') : $user_id));
-		$ci->db->order_by('user_id, id');
-		return $ci->db->get()->row()->department_id;
-	}
-}
-
-// CRUD STATUS ======================================
-if ( ! function_exists('crud_error'))
-{
-	function crud_error($err_message=NULL)
-	{
-		if ( is_array($err_message) )
-			$arr1 = array("isError"=>true,"errorMsg"=>l('-') );
-		else
-			$arr1 = array("isError"=>true,"errorMsg"=>l($err_message) );
-		$result = is_array($err_message) ? array_merge($arr1, $err_message) : $arr1;
-		echo json_encode( $result );
-		exit;
-	}
-}
-
-if ( ! function_exists('crud_success'))
-{
-	function crud_success($arrMsg=NULL)
-	{
-		$arr1 	= array("success"=>1,"infoMsg"=>l('success_saving'));
-		$result = is_array($arrMsg) ? array_merge($arr1, $arrMsg) : $arr1;
-		echo json_encode( $result );
-		exit;
-	}
-}
-
-if ( ! function_exists('crud_result'))
-{
-	function crud_result($result)
-	{
-		echo json_encode( $result );
-		exit;
-	}
-}
-
-if ( ! function_exists('crud_result_html'))
-{
-	function crud_result_html($result)
-	{
-		echo $result;
-		exit;
-	}
-}
-
 // CURRENCY ====================================
-if ( ! function_exists('getCurrencyRateById'))
-{
-	function getCurrencyById($id, $date=NULL) {
-		$ci = get_instance();
-		
-		$params['table'] = 'currency';
-		
-		$date = empty($date) ? date('Y-m-d') : $date;
-		
-		$ci->db->select("c.*, 
-			COALESCE((select rate from currency_rate as cr where cr.currency_id = c.id and date = '$date'),
-			(select rate from currency_rate as cr where cr.currency_id = c.id order by id desc limit 1)) as rate", FALSE);
-		$ci->db->from($params['table'].' as c');
-		$ci->db->where('id', $id);
-		return $ci->db->get()->row();
-	
-	}
-}
-
-if ( ! function_exists('get_currency'))
-{
-	function get_currency($id, $date=NULL) {
-		$ci = get_instance();
-		
-		$params['table'] = 'currency';
-		
-		$date = empty($date) ? date('Y-m-d') : $date;
-		
-		$ci->db->select("c.*, 
-			(select top 1 rate from currency_rate where currency_id = c.id and date <= '$date' order by date desc) as rate", FALSE);
-		$ci->db->from($params['table'].' as c');
-		$ci->db->where('id', $id);
-		return $ci->db->get()->row();
-	
-	}
-}
-
 if ( ! function_exists('format_rupiah'))
 {
 	function format_rupiah($val, $precision = 0) {
@@ -1441,29 +1216,6 @@ if ( ! function_exists('log_p'))
 		} else {
 			$ci->output->set_output($data);
 		}
-	}
-}
-
-if ( ! function_exists('l'))
-{
-	function l($langkey)
-	{
-		include('assets/languages/english.php');
-		return empty($lang[$langkey]) ? "Undefined language: $langkey" : $lang[$langkey];
-	}
-}
-
-if ( ! function_exists('getBranchAliasById'))
-{
-	function getBranchAliasById($id) {
-		$ci = get_instance();
-		
-		$ci->db->select('alias');
-		$ci->db->from('branch');
-		$ci->db->where('id', $id);
-		$qry = $ci->db->get();
-		return ( $qry->num_rows() > 0) ? $qry->row()->alias : NULL;
-	
 	}
 }
 

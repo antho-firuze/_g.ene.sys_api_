@@ -49,9 +49,11 @@ class JWT
 		$assets = [
 			'iat'  => $issuedAt,         // Issued at: time when the token was generated
 			'nbf'  => $notBefore,        // Not before
-			'exp'  => $expire,            // Expire
-			'data' => $payload
+			'exp'  => $expire,           // Expire
+			'data' => array_merge($payload)	// Data to be included
 		];
+		
+		$GLOBALS['identifier']['exp'] = $this->config->item('exp', 'jwt');
 		
 		return JWT::encode($assets, $key, $algo);
 	}

@@ -85,7 +85,7 @@ $db['default'] = array(
 	'hostname' => 'localhost',
 	'username' => 'postgres',
 	'password' => 'admin123',
-	'database' => 'db_genesys_remake',
+	'database' => 'db_genesys_api',
 	'dbdriver' => 'postgre',
 	
 	// 'hostname' => 'localhost',

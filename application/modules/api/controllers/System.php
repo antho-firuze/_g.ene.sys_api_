@@ -21,7 +21,7 @@ class System extends REST_Controller {
 
 		// BASIC AUTH
         $username = $this->input->server('PHP_AUTH_USER');
-        $http_auth = $this->input->server('HTTP_AUTHENTICATION');
+        $http_auth = $this->input->server('HTTP_AUTHORIZATION');
         $password = NULL;
         if ($username !== NULL)
         {
@@ -31,7 +31,7 @@ class System extends REST_Controller {
         {
             if (strpos(strtolower($http_auth), 'basic') === 0)
             {
-                list($username, $password) = explode(':', base64_decode(substr($this->input->server('HTTP_AUTHORIZATION'), 6)));
+                list($username, $password) = explode(':', base64_decode(substr($http_auth, 6)));
             }
         }
 		if (! $id = $this->auth->login($username, $password))
@@ -39,15 +39,21 @@ class System extends REST_Controller {
 			$this->response(['status' => FALSE, 'message' => $this->auth->errors()], 401);
 		}
 		
+		// User Data
 		$user = $this->db->get_where('a_user', ['id'=>$id])->row();
 		$GLOBALS['identifier'] = [
 			'user_id' 	=> $id,
 			'client_id'	=> $user->client_id,
 			'org_id'	=> $user->org_id,
-			'role_id'	=> $user->role_id
+			'role_id'	=> $user->role_id,
+			'photo_link' => 'http://lorempixel.com/160/160/people/'
 		];
 		
-		$this->xresponse(TRUE);
+		$this->load->library('encryption');
+		
+		// $data['authentication'] = $this->encryption->encrypt(json_encode($GLOBALS['identifier']));
+		$data['authentication'] = urlsafeB64Encode(json_encode($GLOBALS['identifier']));
+		$this->xresponse(TRUE, $data);
 	}
 	
 	function cektoken_get()

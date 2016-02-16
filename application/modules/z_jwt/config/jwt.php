@@ -12,7 +12,7 @@ $config = [
     |
     */
 
-    'secret' => 'vilexHHtJ0wN67n68clAokWN1mPpPrFb',
+    'secret' => '786-AllahummaSholli-alaSayyidinaaMuhammad',
 
     /*
     |--------------------------------------------------------------------------

@@ -13,6 +13,33 @@ class Test extends CI_Controller {
 		// check_auth_restapi();
 	}
 	
+	function key()
+	{
+		// echo get_api_sig();
+		$this->load->library('encryption');
+		
+		$key = $this->encryption->create_key(10);
+		echo base64_encode($key);
+		echo " <br> ";
+		echo urlsafeB64Encode($key);
+		echo " <br> ";
+		echo base64_encode($key);
+		echo " <br> ";
+	}
+	
+	function encrypt()
+	{
+		$arr = [
+			'user_id' 	=> 11,
+			'client_id'	=> 11,
+			'org_id'	=> 11,
+			'role_id'	=> 11
+		];
+		echo base64_encode(hash_hmac('sha256', json_encode($arr), 'vilexHHtJ0wN67n68clAokWN1mPpPrFb'));
+		echo " -- ";
+		echo base64_encode(hash_hmac('sha256', json_encode($arr), 'vilexHHtJ0wN67n68clAokWN1mPpPrFb', TRUE));
+	}
+	
 	function path()
 	{
 		// echo FCPATH . 'var';
