@@ -46,7 +46,7 @@ class System extends REST_Controller {
 			'client_id'	=> $user->client_id,
 			'org_id'	=> $user->org_id,
 			'role_id'	=> $user->role_id,
-			'photo_link' => 'http://lorempixel.com/160/160/people/'
+			'photo_link' => empty($user->photo_link) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_link)
 		];
 		
 		$this->load->library('encryption');

@@ -32,11 +32,11 @@ $config = [
     |--------------------------------------------------------------------------
     |
     | Specify the length of time (in second) that the token will be valid for.
-    | Defaults to 1 hour
+    | Defaults to 1 day
     |
     */
 
-    'exp' => 3600,
+    'exp' => 60*60*24,
 
     /*
     |--------------------------------------------------------------------------
