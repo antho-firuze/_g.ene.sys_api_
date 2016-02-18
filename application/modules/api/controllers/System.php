@@ -187,6 +187,24 @@ class System extends REST_Controller {
 		$this->response($this->system_model->getUser($params));
 	}
 
+	function rolemenutest_get()
+	{
+		// $sess = $this->_check_token();
+		
+		$arg = (object) $this->input->get();
+		
+		if (! empty($arg->id))
+		{
+			$params['where']['role_id'] = $arg->id;
+			// $result = (object) $this->system_model->getRoleMenu($params)[0];
+			$result['data'] = $this->system_model->getRoleMenu($params);
+			$this->response($result);
+			// $this->xresponse(TRUE, $result);
+		}
+		// $this->xresponse(FALSE, [], 401);
+		$this->response([], 401);
+	}
+	
 	function rolemenu_get()
 	{
 		$sess = $this->_check_token();
@@ -202,6 +220,7 @@ class System extends REST_Controller {
 			$this->xresponse(TRUE, $result);
 		}
 		$this->xresponse(FALSE, [], 401);
+		// $this->response([], 401);
 	}
 	
 }

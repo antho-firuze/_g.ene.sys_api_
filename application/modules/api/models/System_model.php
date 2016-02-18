@@ -70,12 +70,16 @@ class System_Model extends Z_Model
 	
 	function getRoleMenu($params)
 	{
-		$params['select'] 	= "menu_id, role_id, am.line_no, am.is_separator, am.name, am.description, am.is_parent, am.parent_id";
+		$params['select'] 	= "menu_id, role_id, am.line_no, am.is_separator, am.name, am.description, 
+			am.is_parent, am.parent_id, am.path, arm.is_readwrite";
 		$params['table'] 	= "a_role_menu arm";
-		$params['join'][] 	= ['a_role ar', 'arm.role_id = ar.id', 'left'];
-		$params['join'][] 	= ['a_menu am', 'arm.menu_id = am.id', 'left'];
+		$params['join'][] 	= ['a_role ar', "arm.role_id = ar.id and ar.is_deleted = '0'", 'inner'];
+		$params['join'][] 	= ['a_menu am', "arm.menu_id = am.id and am.is_deleted = '0'", 'inner'];
+		$params['where']['ar.is_active'] 	= '1';
+		$params['where']['am.is_active'] 	= '1';
+		$params['where']['arm.is_active'] 	= '1';
 		$params['where']['arm.is_deleted'] 	= '0';
 		
-		return $this->mget_rec($params);
+		return $this->mget_rec_tree($params);
 	}
 }
