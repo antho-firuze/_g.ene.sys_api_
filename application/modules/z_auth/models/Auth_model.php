@@ -443,6 +443,11 @@ class Auth_model extends CI_Model
 
 				$this->clear_login_attempts($identity);
 
+				if ($remember)
+				{
+					$this->remember_user($user->id);
+				}
+				
 				return $user->id;
 			}
 		}
