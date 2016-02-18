@@ -24,6 +24,21 @@ class System_Model extends Z_Model
 	{
 		$params['table'] 	= "a_user as au";
 		$params['join'][] 	= ['a_user_config as auc', 'au.id = auc.user_id', 'left'];
+		$params['join'][] 	= ['a_client as ac', 'au.client_id = ac.id', 'left'];
+		$params['join'][] 	= ['a_org as ao', 'au.org_id = ao.id', 'left'];
+		$params['join'][] 	= ['a_role as ar', 'au.role_id = ar.id', 'left'];
+		$params['where']['au.is_deleted'] 	= '0';
+		
+		return $this->mget_rec($params);
+	}
+	
+	function getUserWCount($params)
+	{
+		$params['table'] 	= "a_user as au";
+		$params['join'][] 	= ['a_user_config as auc', 'au.id = auc.user_id', 'left'];
+		$params['join'][] 	= ['a_client as ac', 'au.client_id = ac.id', 'left'];
+		$params['join'][] 	= ['a_org as ao', 'au.org_id = ao.id', 'left'];
+		$params['join'][] 	= ['a_role as ar', 'au.role_id = ar.id', 'left'];
 		$params['where']['au.is_deleted'] 	= '0';
 		
 		return $this->mget_rec_count($params);
@@ -51,5 +66,16 @@ class System_Model extends Z_Model
 			}
 		}
 		return $return;
+	}
+	
+	function getRoleMenu($params)
+	{
+		$params['select'] 	= "menu_id, role_id, am.line_no, am.is_separator, am.name, am.description, am.is_parent, am.parent_id";
+		$params['table'] 	= "a_role_menu arm";
+		$params['join'][] 	= ['a_role ar', 'arm.role_id = ar.id', 'left'];
+		$params['join'][] 	= ['a_menu am', 'arm.menu_id = am.id', 'left'];
+		$params['where']['arm.is_deleted'] 	= '0';
+		
+		return $this->mget_rec($params);
 	}
 }

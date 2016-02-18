@@ -40,19 +40,33 @@ class System extends REST_Controller {
 		}
 		
 		// User Data
-		$user = $this->db->get_where('a_user', ['id'=>$id])->row();
+		// $user = $this->db->get_where('a_user', ['id'=>$id])->row();
+		$params['select'] = 'au.id, au.client_id, au.org_id, au.role_id, au.name, au.description, au.email, 
+			au.photo_link, ac.name as client_name, ao.name as org_name, ar.name as role_name';
+		$params['where']['au.id'] = $id;
+		$user = (object) $this->system_model->getUser($params)[0];
+		
 		$GLOBALS['identifier'] = [
 			'user_id' 	=> $id,
 			'client_id'	=> $user->client_id,
 			'org_id'	=> $user->org_id,
 			'role_id'	=> $user->role_id,
-			'photo_link' => empty($user->photo_link) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_link)
 		];
 		
-		$this->load->library('encryption');
+		$data = [
+			'name'			=> $user->name,
+			'description'	=> $user->description,
+			'email'			=> $user->email,
+			'client_name'	=> $user->client_name,
+			'org_name'		=> $user->org_name,
+			'role_name'		=> $user->role_name,
+			'photo_link' 	=> empty($user->photo_link) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_link),
+		];
 		
+		$result = array_merge($GLOBALS['identifier'], $data);
+		// $this->load->library('encryption');
 		// $data['authentication'] = $this->encryption->encrypt(json_encode($GLOBALS['identifier']));
-		$data['authentication'] = urlsafeB64Encode(json_encode($GLOBALS['identifier']));
+		$data['authentication'] = urlsafeB64Encode(json_encode($result));
 		$this->xresponse(TRUE, $data);
 	}
 	
@@ -165,8 +179,29 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE);
 	}
 
-	function test(){
-		// $this->db->
+	function test_get(){
+		$params['select'] = 'au.name, au.description, au.email, au.photo_link, ac.name as client_name, ao.name as org_name, ar.name as role_name';
+		$params['where']['au.id'] = 11;
+		$user = (object) $this->system_model->getUser($params)[0];
+		return log_p($user->name);
+		$this->response($this->system_model->getUser($params));
 	}
 
+	function rolemenu_get()
+	{
+		$sess = $this->_check_token();
+		
+		$arg = (object) $this->input->get();
+		
+		if (! empty($arg->id))
+		{
+			$params['where']['role_id'] = $arg->id;
+			// $result = (object) $this->system_model->getRoleMenu($params)[0];
+			$result['data'] = $this->system_model->getRoleMenu($params);
+			// $this->response($result);
+			$this->xresponse(TRUE, $result);
+		}
+		$this->xresponse(FALSE, [], 401);
+	}
+	
 }
