@@ -189,15 +189,11 @@ class System extends REST_Controller {
 
 	function rolemenutest_get()
 	{
-		// $sess = $this->_check_token();
-		
 		$arg = (object) $this->input->get();
 		
 		if (! empty($arg->id))
 		{
-			$params['where']['role_id'] = $arg->id;
-			// $result = (object) $this->system_model->getRoleMenu($params)[0];
-			$result['data'] = $this->system_model->getRoleMenu($params);
+			$result['data'] = $this->system_model->getRoleMenu($arg->id);
 			$this->response($result);
 			// $this->xresponse(TRUE, $result);
 		}
@@ -213,14 +209,10 @@ class System extends REST_Controller {
 		
 		if (! empty($arg->id))
 		{
-			$params['where']['role_id'] = $arg->id;
-			// $result = (object) $this->system_model->getRoleMenu($params)[0];
-			$result['data'] = $this->system_model->getRoleMenu($params);
-			// $this->response($result);
+			$result['data'] = $this->system_model->getRoleMenu($arg->id);
 			$this->xresponse(TRUE, $result);
 		}
 		$this->xresponse(FALSE, [], 401);
-		// $this->response([], 401);
 	}
 	
 }

@@ -50,6 +50,44 @@ class Z_Model extends CI_Model
 		return $response;
 	}
 	
+	function mget_rec_tree($params)
+	{ 
+		if ( empty($params['id']) ) {
+			$params['where']['parent_id'] = '0';
+			$params['ob'] = 'line_no asc';
+			$result = (array)$this->mget_rec($params);
+
+			$results = array();
+			foreach ( $result as $r ) {
+				$r->state = ($this->mhas_child_tree( $params, $r->menu_id )) ? 'closed' : 'open';
+				array_push($results, $r);
+			}
+		} else {
+			$params['where']['parent_id'] = $params['id'];
+			$params['ob'] = 'line_no asc';
+			$result = $this->mget_rec($params);
+
+			$results = array();
+			foreach ( $result as $r ) {
+				$r->state = ($this->mhas_child_tree( $params, $r->menu_id )) ? 'closed' : 'open';
+				array_push($results, $r);
+			}
+		}
+		
+		return $results;
+	}
+	
+	function mhas_child_tree($params, $id) 
+	{
+		$this->db->select('COUNT(*) AS rec_count');
+		$this->db->from($params['table']);
+		if ( array_key_exists('join', $params)) DBX::join($this, $params['join']);
+		if ( array_key_exists('where', $params)) $this->db->where($params['where']);
+		$this->db->where('parent_id', $id);
+		// $this->db->where('is_deleted', 0);
+		return ($this->db->get()->row()->rec_count > 0) ? TRUE : FALSE;
+	}
+	
 	// NEW DESIGN FOR DATA REQUEST
 	function get_rec( $params=NULL ) {
 		if ( is_array($params) )
@@ -117,32 +155,6 @@ class Z_Model extends CI_Model
 			}
 		}
 		return $this->db->get();
-	}
-	
-	function mget_rec_tree( $params ) { 
-		if ( empty($params['id']) ) {
-			$params['where']['parent_id'] = '0';
-			$params['ob'] = 'line_no asc';
-			$result = (array)$this->mget_rec($params);
-
-			$results = array();
-			foreach ( $result as $r ) {
-				$r->state = ($this->mhas_child_tree( $params, $r->menu_id )) ? 'closed' : 'open';
-				array_push($results, $r);
-			}
-		} else {
-			$params['where']['parent_id'] = $params['id'];
-			$params['ob'] = 'line_no asc';
-			$result = $this->mget_rec($params);
-
-			$results = array();
-			foreach ( $result as $r ) {
-				$r->state = ($this->mhas_child_tree( $params, $r->menu_id )) ? 'closed' : 'open';
-				array_push($results, $r);
-			}
-		}
-		
-		return $results;
 	}
 	
 	function get_rec_tree( $params=NULL ) { 
@@ -223,16 +235,6 @@ class Z_Model extends CI_Model
 		}
 		
 		return $response;
-	}
-	
-	function mhas_child_tree( $params, $id ) {
-		$this->db->select('COUNT(*) AS rec_count');
-		$this->db->from($params['table']);
-		if ( array_key_exists('join', $params)) DBX::join($this, $params['join']);
-		if ( array_key_exists('where', $params)) $this->db->where($params['where']);
-		$this->db->where('parent_id', $id);
-		// $this->db->where('is_deleted', 0);
-		return ($this->db->get()->row()->rec_count > 0) ? TRUE : FALSE;
 	}
 	
 	function has_child_tree( $table, $id ) {

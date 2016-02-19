@@ -68,18 +68,27 @@ class System_Model extends Z_Model
 		return $return;
 	}
 	
-	function getRoleMenu($params)
+	function getRoleMenu($role_id)
 	{
-		$params['select'] 	= "menu_id, role_id, am.line_no, am.is_separator, am.name, am.description, 
-			am.is_parent, am.parent_id, am.path, arm.is_readwrite";
-		$params['table'] 	= "a_role_menu arm";
-		$params['join'][] 	= ['a_role ar', "arm.role_id = ar.id and ar.is_deleted = '0'", 'inner'];
-		$params['join'][] 	= ['a_menu am', "arm.menu_id = am.id and am.is_deleted = '0'", 'inner'];
-		$params['where']['ar.is_active'] 	= '1';
-		$params['where']['am.is_active'] 	= '1';
-		$params['where']['arm.is_active'] 	= '1';
-		$params['where']['arm.is_deleted'] 	= '0';
+		$query = "select 
+		am1.id as menu_id1, am1.role_id as role_id1, am1.name as name1, am1.is_parent as is_parent1, am1.path as path1, am1.is_readwrite as is_readwrite1, 
+		am2.id as menu_id2, am2.role_id as role_id2, am2.name as name2, am2.is_parent as is_parent2, am2.path as path2, am2.is_readwrite as is_readwrite2, 
+		am3.id as menu_id3, am3.role_id as role_id3, am3.name as name3, am3.is_parent as is_parent3, am3.path as path3, am3.is_readwrite as is_readwrite3
+		from (
+			select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu am on am.id = arm.menu_id 
+			where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
+		) am1
+		left join (
+			select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu am on am.id = arm.menu_id 
+			where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
+		) am2 on am1.id = am2.parent_id 
+		left join (
+			select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu am on am.id = arm.menu_id 
+			where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
+		) am3 on am2.id = am3.parent_id 
+		where am1.parent_id = '0'
+		order by am1.line_no, am2.line_no, am3.line_no";
 		
-		return $this->mget_rec_tree($params);
+		return $this->db->query($query)->result();
 	}
 }
