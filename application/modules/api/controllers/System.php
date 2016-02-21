@@ -46,6 +46,13 @@ class System extends REST_Controller {
 		$params['where']['au.id'] = $id;
 		$user = (object) $this->system_model->getUser($params)[0];
 		
+		$userConfig = (object) $this->system_model->getUserConfig([
+			'select' => 'attribute, value', 
+			'where' => ['user_id' => $id]
+		]);
+		foreach($userConfig as $k => $v)
+			$config[$v->attribute] = $v->value;
+		
 		$GLOBALS['identifier'] = [
 			'user_id' 	=> $id,
 			'client_id'	=> $user->client_id,
@@ -63,7 +70,7 @@ class System extends REST_Controller {
 			'photo_link' 	=> empty($user->photo_link) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_link),
 		];
 		
-		$data = array_merge($GLOBALS['identifier'], $data);
+		$data = array_merge($GLOBALS['identifier'], $data, $config);
 		// $this->load->library('encryption');
 		// $data['authentication'] = $this->encryption->encrypt(json_encode($GLOBALS['identifier']));
 		$result['data'] = urlsafeB64Encode(json_encode($data));
@@ -208,28 +215,6 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE);
 	}
 
-	function test_get(){
-		$params['select'] = 'au.name, au.description, au.email, au.photo_link, ac.name as client_name, ao.name as org_name, ar.name as role_name';
-		$params['where']['au.id'] = 11;
-		$user = (object) $this->system_model->getUser($params)[0];
-		return log_p($user->name);
-		$this->response($this->system_model->getUser($params));
-	}
-
-	function rolemenutest_get()
-	{
-		$arg = (object) $this->input->get();
-		
-		if (! empty($arg->id))
-		{
-			$result['data'] = $this->system_model->getRoleMenu($arg->id);
-			$this->response($result);
-			// $this->xresponse(TRUE, $result);
-		}
-		// $this->xresponse(FALSE, [], 401);
-		$this->response([], 401);
-	}
-	
 	function rolemenu_get()
 	{
 		$sess = $this->_check_token();
@@ -244,4 +229,32 @@ class System extends REST_Controller {
 		$this->xresponse(FALSE, [], 401);
 	}
 	
+	
+	
+	
+	
+	function rolemenutest_get()
+	{
+		$arg = (object) $this->input->get();
+		
+		if (! empty($arg->id))
+		{
+			$result['data'] = $this->system_model->getRoleMenu($arg->id);
+			$this->response($result);
+		}
+		$this->response([], 401);
+	}
+	
+	function test_get()
+	{
+		$userConfig = (object) $this->system_model->getUserConfig([
+			'select' => 'attribute, value', 
+			'where' => ['user_id' => 11]
+		]);
+		foreach($userConfig as $k => $v)
+			$data->{$v->attribute} = $v->value;
+
+		return log_p($data);
+	}
+
 }
