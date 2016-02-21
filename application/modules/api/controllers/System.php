@@ -10,18 +10,18 @@ class System extends REST_Controller {
 		$this->load->model('api/system_model');
 	}
 	
-	function login_get()
+	function authentication_get()
 	{
 		$this->load->library('z_auth/auth');
 		
 		// ADDITIONAL KEY
-		$apps_key  	= $this->input->get_request_header('Application-Key');
-		if (! $result = $this->db->where('api_token', $apps_key)->get('a_system')->row() ) 
+		$apps_key  	= $this->input->get_request_header('X-API-KEY');
+		if (! $this->db->where('api_token', $apps_key)->get('a_system')->row() ) 
 			$this->response(['status' => FALSE, 'message' => 'What are you doing...?'], 400);
 
 		// BASIC AUTH
         $username = $this->input->server('PHP_AUTH_USER');
-        $http_auth = $this->input->server('HTTP_AUTHORIZATION');
+        $http_auth = $this->input->server('HTTP_X_AUTH');
         $password = NULL;
         if ($username !== NULL)
         {
@@ -63,11 +63,40 @@ class System extends REST_Controller {
 			'photo_link' 	=> empty($user->photo_link) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_link),
 		];
 		
-		$result = array_merge($GLOBALS['identifier'], $data);
+		$data = array_merge($GLOBALS['identifier'], $data);
 		// $this->load->library('encryption');
 		// $data['authentication'] = $this->encryption->encrypt(json_encode($GLOBALS['identifier']));
-		$data['authentication'] = urlsafeB64Encode(json_encode($result));
-		$this->xresponse(TRUE, $data);
+		$result['data'] = urlsafeB64Encode(json_encode($data));
+		$this->xresponse(TRUE, $result);
+	}
+	
+	function unlockscreen_get()
+	{
+		$sess = $this->_check_token();
+		
+		$this->load->library('z_auth/auth');
+		
+		// BASIC AUTH
+        $username = $this->input->server('PHP_AUTH_USER');
+        $http_auth = $this->input->server('HTTP_X_AUTH');
+        $password = NULL;
+        if ($username !== NULL)
+        {
+            $password = $this->input->server('PHP_AUTH_PW');
+        }
+        elseif ($http_auth !== NULL)
+        {
+            if (strpos(strtolower($http_auth), 'basic') === 0)
+            {
+                list($username, $password) = explode(':', base64_decode(substr($http_auth, 6)));
+            }
+        }
+		if (! $id = $this->auth->login($username, $password))
+		{
+			$this->response(['status' => FALSE, 'message' => $this->auth->errors()], 401);
+		}
+		
+		$this->xresponse(TRUE, []);
 	}
 	
 	function cektoken_get()

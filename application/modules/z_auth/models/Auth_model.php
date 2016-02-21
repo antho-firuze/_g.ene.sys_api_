@@ -405,7 +405,7 @@ class Auth_model extends CI_Model
 	{
 		if (empty($identity) || empty($password))
 		{
-			// $this->set_error('login_unsuccessful');
+			$this->set_error('login_unsuccessful');
 			return FALSE;
 		}
 
