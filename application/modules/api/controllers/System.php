@@ -229,8 +229,33 @@ class System extends REST_Controller {
 		$this->xresponse(FALSE, [], 401);
 	}
 	
-	
-	
+	function userConfig_post()
+	{
+		$sess = $this->_check_token();
+		
+		$data = (object) $this->post();
+		
+		$return = 0; 
+		foreach($data as $key => $value)
+		{
+			$cond = ['user_id' => $sess->user_id, 'attribute' => $key];
+			$qry = $this->db->get_where('a_user_config', $cond, 1);
+			if ($qry->num_rows() < 1)
+			{
+				$data = array_merge($cond, ['value' => $value]);
+				$this->system_model->createUserConfig($data);
+				$return++;
+			}
+			else
+			{
+				if ($arow = $this->system_model->updateUserConfig(['value' => $value], $cond))
+				{
+					$return += $arow;
+				}
+			}
+		}
+		$this->xresponse(TRUE);
+	}
 	
 	
 	function rolemenutest_get()
@@ -254,7 +279,7 @@ class System extends REST_Controller {
 		foreach($userConfig as $k => $v)
 			$data->{$v->attribute} = $v->value;
 
-		return log_p($data);
+		return out($data);
 	}
 
 }

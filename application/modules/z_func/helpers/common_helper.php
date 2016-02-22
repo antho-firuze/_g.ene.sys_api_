@@ -1,5 +1,27 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+if ( ! function_exists('xresponse'))
+{
+	function xresponse($status=TRUE, $response=array(), $statusHeader=200)
+	{
+		$BM =& load_class('Benchmark', 'core');
+		
+		$statusHeader = empty($statusHeader) ? 200 : $statusHeader;
+		if (! is_numeric($statusHeader))
+			show_error('Status codes must be numeric', 500);
+		
+		if (! empty($response))
+			$response = is_array($response) ? $response : array($response);
+		else
+			$response = array();
+		
+		header("HTTP/1.0 $statusHeader");
+		header('Content-Type: application/json');
+		echo json_encode(array_merge(['status' => $status], $response));
+		exit();
+	}
+}
+	
 if ( ! function_exists('urlsafeB64Encode'))
 {
 	function urlsafeB64Encode($input)
@@ -1202,9 +1224,9 @@ if ( ! function_exists('set_upload_folder'))
 }
 
 // DEBUGGING 
-if ( ! function_exists('log_p'))
+if ( ! function_exists('out'))
 {
-	function log_p($data='')
+	function out($data='')
 	{
 		$ci =& get_instance();
 		

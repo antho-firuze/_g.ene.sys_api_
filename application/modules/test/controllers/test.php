@@ -62,7 +62,7 @@ class Test extends CI_Controller {
 		$a || $a = $c;	// If $a = true, then right not execute
 		$b || $b = $c;	// if $a = false, then right is execute
 
-		return log_p($a .' - '. $b);
+		return out($a .' - '. $b);
 	}
 	
 	function gen_join()
@@ -79,26 +79,26 @@ class Test extends CI_Controller {
 		// $params['like']['u.username'] = $q;
 		// $params['like']['u.first_name'] = $q;
 		// $params['like']['u.last_name'] = $q;
-		// return log_p($params['like']);
+		// return out($params['like']);
 		
 		foreach (explode(',', $field) as $v)
 		{
 			$like[$v] = $q;
 		}
-		return log_p($like);
+		return out($like);
 	}
 	
 	function get_nih(){
-		// return log_p($this->input->get());
+		// return out($this->input->get());
 		// $params = $this->input->post();
-		// return log_p($params);
-		return log_p((object)$this->input->get());
-		// return log_p($this->input->get()['name']);
+		// return out($params);
+		return out((object)$this->input->get());
+		// return out($this->input->get()['name']);
 		// $params = (object)$this->input->get();
-		// return log_p($params->name);
+		// return out($params->name);
 		// list($id, $name) = (object) $this->input->get();
-		// return log_p($name);
-		// return log_p($this->uri->segment(3));
+		// return out($name);
+		// return out($this->uri->segment(3));
 	}
 	
 	function index() {
@@ -150,7 +150,7 @@ class Test extends CI_Controller {
 		$arr['b'] = 2;
 		
 		$txt = "coba coba";
-		return log_p($arr);
+		return out($arr);
 	}
 	
 	function restopi(){
