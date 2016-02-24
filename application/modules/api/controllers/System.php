@@ -45,22 +45,7 @@ class System extends REST_Controller {
 			au.photo_link, ac.name as client_name, ao.name as org_name, ar.name as role_name';
 		$params['where']['au.id'] = $id;
 		$user = (object) $this->system_model->getUser($params)[0];
-		
-		$userConfig = (object) $this->system_model->getUserConfig([
-			'select' => 'attribute, value', 
-			'where' => ['user_id' => $id]
-		]);
-		foreach($userConfig as $k => $v)
-			$config[$v->attribute] = $v->value;
-		
-		$GLOBALS['identifier'] = [
-			'user_id' 	=> $id,
-			'client_id'	=> $user->client_id,
-			'org_id'	=> $user->org_id,
-			'role_id'	=> $user->role_id,
-		];
-		
-		$data = [
+		$dataUser = [
 			'name'			=> $user->name,
 			'description'	=> $user->description,
 			'email'			=> $user->email,
@@ -70,7 +55,22 @@ class System extends REST_Controller {
 			'photo_link' 	=> empty($user->photo_link) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_link),
 		];
 		
-		$data = array_merge($GLOBALS['identifier'], $data, $config);
+		$userConfig = (object) $this->system_model->getUserConfig([
+			'select' => 'attribute, value', 
+			'where' => ['user_id' => $id]
+		]);
+		$dataConfig = [];
+		foreach($userConfig as $k => $v)
+			$dataConfig[$v->attribute] = $v->value;
+		
+		$GLOBALS['identifier'] = [
+			'user_id' 	=> $id,
+			'client_id'	=> $user->client_id,
+			'org_id'	=> $user->org_id,
+			'role_id'	=> $user->role_id,
+		];
+		
+		$data = array_merge($GLOBALS['identifier'], $dataUser, $dataConfig);
 		// $this->load->library('encryption');
 		// $data['authentication'] = $this->encryption->encrypt(json_encode($GLOBALS['identifier']));
 		$result['data'] = urlsafeB64Encode(json_encode($data));

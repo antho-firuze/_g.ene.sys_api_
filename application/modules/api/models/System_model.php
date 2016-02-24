@@ -24,7 +24,6 @@ class System_Model extends Z_Model
 	{
 		$params['select']	= !array_key_exists('select', $params) ? "au.*" : $params['select'];
 		$params['table'] 	= "a_user as au";
-		$params['join'][] 	= ['a_user_config as auc', 'au.id = auc.user_id', 'left'];
 		$params['join'][] 	= ['a_client as ac', 'au.client_id = ac.id', 'left'];
 		$params['join'][] 	= ['a_org as ao', 'au.org_id = ao.id', 'left'];
 		$params['join'][] 	= ['a_role as ar', 'au.role_id = ar.id', 'left'];
