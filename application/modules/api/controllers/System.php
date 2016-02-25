@@ -42,7 +42,7 @@ class System extends REST_Controller {
 		// User Data
 		// $user = $this->db->get_where('a_user', ['id'=>$id])->row();
 		$params['select'] = 'au.id, au.client_id, au.org_id, au.role_id, au.name, au.description, au.email, 
-			au.photo_link, ac.name as client_name, ao.name as org_name, ar.name as role_name';
+			au.photo_url, ac.name as client_name, ao.name as org_name, ar.name as role_name';
 		$params['where']['au.id'] = $id;
 		$user = (object) $this->system_model->getUser($params)[0];
 		$dataUser = [
@@ -52,7 +52,7 @@ class System extends REST_Controller {
 			'client_name'	=> $user->client_name,
 			'org_name'		=> $user->org_name,
 			'role_name'		=> $user->role_name,
-			'photo_link' 	=> empty($user->photo_link) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_link),
+			'photo_url' 	=> empty($user->photo_url) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_url),
 		];
 		
 		$userConfig = (object) $this->system_model->getUserConfig([

@@ -82,9 +82,9 @@ class System_Model extends Z_Model
 	function getRoleMenu($role_id)
 	{
 		$query = "select 
-		am1.id as menu_id1, am1.role_id as role_id1, am1.name as name1, am1.is_parent as is_parent1, am1.path as path1, am1.is_readwrite as is_readwrite1, 
-		am2.id as menu_id2, am2.role_id as role_id2, am2.name as name2, am2.is_parent as is_parent2, am2.path as path2, am2.is_readwrite as is_readwrite2, 
-		am3.id as menu_id3, am3.role_id as role_id3, am3.name as name3, am3.is_parent as is_parent3, am3.path as path3, am3.is_readwrite as is_readwrite3
+		am1.id as menu_id1, am1.role_id as role_id1, am1.name as name1, am1.is_parent as is_parent1, am1.url as url1, am1.icon as icon1, am1.is_readwrite as is_readwrite1, 
+		am2.id as menu_id2, am2.role_id as role_id2, am2.name as name2, am2.is_parent as is_parent2, am2.url as url2, am2.icon as icon2, am2.is_readwrite as is_readwrite2, 
+		am3.id as menu_id3, am3.role_id as role_id3, am3.name as name3, am3.is_parent as is_parent3, am3.url as url3, am3.icon as icon3, am3.is_readwrite as is_readwrite3
 		from (
 			select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu am on am.id = arm.menu_id 
 			where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
@@ -101,9 +101,9 @@ class System_Model extends Z_Model
 		order by am1.line_no, am2.line_no, am3.line_no";
 		
 		/* $query = "select 
-		am1.id as menu_id1, am1.role_id as role_id1, am1.name as name1, am1.is_parent as is_parent1, am1.path as path1, am1.is_readwrite as is_readwrite1, 
-		am2.id as menu_id2, am2.role_id as role_id2, am2.name as name2, am2.is_parent as is_parent2, am2.path as path2, am2.is_readwrite as is_readwrite2, 
-		am3.id as menu_id3, am3.role_id as role_id3, am3.name as name3, am3.is_parent as is_parent3, am3.path as path3, am3.is_readwrite as is_readwrite3
+		am1.id as menu_id1, am1.role_id as role_id1, am1.name as name1, am1.is_parent as is_parent1, am1.url as url1, am1.is_readwrite as is_readwrite1, 
+		am2.id as menu_id2, am2.role_id as role_id2, am2.name as name2, am2.is_parent as is_parent2, am2.url as url2, am2.is_readwrite as is_readwrite2, 
+		am3.id as menu_id3, am3.role_id as role_id3, am3.name as name3, am3.is_parent as is_parent3, am3.url as url3, am3.is_readwrite as is_readwrite3
 		from (
 			select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu_copy am on am.id = arm.menu_id 
 			where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
