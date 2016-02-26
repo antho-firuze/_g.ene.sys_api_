@@ -221,12 +221,27 @@ class System extends REST_Controller {
 		
 		$arg = (object) $this->input->get();
 		
+		$result['data'] = [];
 		if (! empty($arg->id))
 		{
 			$result['data'] = $this->system_model->getRoleMenu($arg->id);
-			$this->xresponse(TRUE, $result);
 		}
-		$this->xresponse(FALSE, [], 401);
+		$this->xresponse(TRUE, $result);
+	}
+	
+	function roledashboard_get()
+	{
+		$sess = $this->_check_token();
+		
+		$arg = (object) $this->input->get();
+		
+		$result['data'] = [];
+		if (! empty($arg->id))
+		{
+			$params['where']['ard.role_id'] = $arg->id;
+			$result['data'] = $this->system_model->getRoleDashboard($params);
+		}
+		$this->xresponse(TRUE, $result);
 	}
 	
 	function userConfig_post()
