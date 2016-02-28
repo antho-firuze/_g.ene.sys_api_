@@ -215,6 +215,23 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE);
 	}
 
+	function userRecent_post()
+	{
+		$sess = $this->_check_token();
+		
+		$params = (object) $this->post();
+		
+		$result['data'] = [];
+		$data = [
+			'user_id'	=> $sess->user_id,
+			'value'		=> $params->value
+		];
+		
+		$this->system_model->createUserRecent($data);
+
+		$this->xresponse(TRUE, $result);
+	}
+	
 	function rolemenu_get()
 	{
 		$sess = $this->_check_token();

@@ -124,31 +124,22 @@ class System_Model extends Z_Model
 	
 	function getRoleDashboard($params)
 	{
-		// $query = "select 
-		// am1.id as menu_id1, am1.role_id as role_id1, am1.name as name1, am1.is_parent as is_parent1, am1.url as url1, am1.icon as icon1, am1.is_readwrite as is_readwrite1, 
-		// am2.id as menu_id2, am2.role_id as role_id2, am2.name as name2, am2.is_parent as is_parent2, am2.url as url2, am2.icon as icon2, am2.is_readwrite as is_readwrite2, 
-		// am3.id as menu_id3, am3.role_id as role_id3, am3.name as name3, am3.is_parent as is_parent3, am3.url as url3, am3.icon as icon3, am3.is_readwrite as is_readwrite3
-		// from (
-			// select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu am on am.id = arm.menu_id 
-			// where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
-		// ) am1
-		// left join (
-			// select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu am on am.id = arm.menu_id 
-			// where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
-		// ) am2 on am1.id = am2.parent_id 
-		// left join (
-			// select am.*, arm.role_id, arm.is_readwrite from a_role_menu arm left join a_menu am on am.id = arm.menu_id 
-			// where am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and arm.role_id = $role_id
-		// ) am3 on am2.id = am3.parent_id 
-		// where am1.parent_id = '0'
-		// order by am1.line_no, am2.line_no, am3.line_no";
-		
 		$params['select']	= !array_key_exists('select', $params) ? "ad.*, ard.role_id, ard.is_readwrite" : $params['select'];
 		$params['table'] 	= "a_role_dashboard ard";
 		$params['join'][] 	= ['a_dashboard ad', 'ad.id = ard.dashboard_id', 'left'];
 		$params['where']	= "ad.is_active = '1' and ad.is_deleted = '0' and ard.is_active = '1' and ard.is_deleted = '0'";
+		$params['order']	= "ad.type, ad.lineno";
 		
 		return $this->mget_rec($params);
+	}
+	
+	function createUserRecent($data)
+	{
+		$qry = $this->db->order('id desc')->get_where('a_user_recent', $data, 1);
+		if ($qry->num_rows() > 0)
+			return TRUE;
+		
+		return $this->db->insert('a_user_recent', $data);
 	}
 	
 	function createUserConfig($data)
