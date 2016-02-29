@@ -232,6 +232,25 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, $result);
 	}
 	
+	function menu_get()
+	{
+		// $sess = $this->_check_token();
+		
+		$arg = (object) $this->input->get();
+		
+		$result['data'] = [];
+		if (! empty($arg->q)) 
+		{
+			$params['like'] = empty($arg->sf) 
+				? DBX::like_or('am.name', $arg->q)
+				: DBX::like_or($arg->sf, $arg->q);
+		}
+		$result['status'] = TRUE;
+		$result['data'] = $this->system_model->getMenu($params);
+		// $this->xresponse(TRUE, $result);
+		$this->response($result);
+	}
+	
 	function rolemenu_get()
 	{
 		$sess = $this->_check_token();

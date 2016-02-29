@@ -79,6 +79,17 @@ class System_Model extends Z_Model
 		return $return;
 	}
 	
+	function getMenu($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "am.name, am.url" : $params['select'];
+		$params['table'] 	= "a_role_menu arm";
+		$params['join'][] 	= ['a_menu am', 'am.id = arm.menu_id', 'left'];
+		$params['where']	= "am.is_active = '1' and am.is_deleted = '0' and arm.is_active = '1' and arm.is_deleted = '0' and am.is_parent = '0'";
+		$params['order']	= "am.name";
+		
+		return $this->mget_rec($params);
+	}
+	
 	function getRoleMenu($role_id)
 	{
 		$query = "select 
