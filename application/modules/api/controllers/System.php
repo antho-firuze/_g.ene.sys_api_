@@ -268,6 +268,7 @@ class System extends REST_Controller {
 		$data = (object) $this->post();
 		
 		$return = 0; 
+		$result['data'] = [];
 		foreach($data as $key => $value)
 		{
 			$cond = ['user_id' => $sess->user_id, 'attribute' => $key];
@@ -286,7 +287,7 @@ class System extends REST_Controller {
 				}
 			}
 		}
-		$this->xresponse(TRUE);
+		$this->xresponse(TRUE, $result);
 	}
 	
 	
