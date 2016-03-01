@@ -232,7 +232,7 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, $result);
 	}
 	
-	function menu_get()
+	function searchMenu_get()
 	{
 		// $sess = $this->_check_token();
 		
@@ -244,9 +244,13 @@ class System extends REST_Controller {
 			$params['like'] = empty($arg->sf) 
 				? DBX::like_or('am.name', $arg->q)
 				: DBX::like_or($arg->sf, $arg->q);
+			
+			$params['select'] = "am.name, am.url, am.icon";
 		}
 		$result['status'] = TRUE;
-		$result['data'] = $this->system_model->getMenu($params);
+		
+		// $result['data'] = $this->system_model->getMenu($params);
+		$result['data'] = $this->system_model->getMenuVal($params);
 		// $this->xresponse(TRUE, $result);
 		$this->response($result);
 	}

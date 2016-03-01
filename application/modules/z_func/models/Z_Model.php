@@ -33,6 +33,32 @@ class Z_Model extends CI_Model
 		return $this->db->get()->result();
 	}
 	
+	function mget_rec_val($params = NULL)
+	{
+		$this->db->select($params['select']);
+		$this->db->from($params['table']);
+		if ( array_key_exists('join', $params)) DBX::join($this, $params['join']);
+		if ( array_key_exists('where', $params)) $this->db->where($params['where']);
+		if ( array_key_exists('like', $params)) $this->db->where($params['like']);
+		if ( array_key_exists('sort', $params)) $this->db->order_by($params['sort'], $params['order']);
+		if ( array_key_exists('ob', $params)) 	$this->db->order_by($params['ob']);
+		if ( array_key_exists('page', $params) && array_key_exists('rows', $params))
+		{
+			$params['page'] = empty($params['page']) ? 1 : $params['page'];
+			$offset = ($params['page']-1)*$params['rows'];
+			$this->db->limit($params['rows'], $offset);
+		}
+		$res = $this->db->get()->result();
+		foreach($res as $idx => $v){
+			foreach($res[$idx] as $val){
+				$row[] = $val;
+			}
+			$result[] = $row;
+			$row = [];
+		}
+		return $result;
+	}
+	
 	function mget_rec_count($params = NULL)
 	{
 		$this->db->select($params['select']);
