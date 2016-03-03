@@ -82,7 +82,13 @@ $db['default'] = array(
 	// 'database' => 'db_genesys_remake',
 	// 'dbdriver' => 'pdo',
 	
-	'hostname' => 'localhost',
+	// 'hostname' => 'localhost',
+	// 'username' => 'postgres',
+	// 'password' => 'admin123',
+	// 'database' => 'db_genesys_api',
+	// 'dbdriver' => 'postgre',
+	
+	'hostname' => '192.168.0.7',
 	'username' => 'postgres',
 	'password' => 'admin123',
 	'database' => 'db_genesys_api',
