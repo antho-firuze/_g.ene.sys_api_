@@ -76,10 +76,10 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	
-	// 'hostname' => 'pgsql:host=localhost;dbname=db_genesys_remake',
+	// 'hostname' => 'pgsql:host=192.168.0.7;dbname=db_genesys_api;',
 	// 'username' => 'postgres',
 	// 'password' => 'admin123',
-	// 'database' => 'db_genesys_remake',
+	// 'database' => 'db_genesys_api',
 	// 'dbdriver' => 'pdo',
 	
 	// 'hostname' => 'localhost',

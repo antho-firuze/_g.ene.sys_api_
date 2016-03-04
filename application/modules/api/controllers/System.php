@@ -106,6 +106,38 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, []);
 	}
 	
+	function change_passwd_post()
+	{
+		$sess = $this->_check_token();
+		
+		$data = (object) $this->post();
+		
+		$this->load->library('z_auth/auth');
+		
+		// BASIC AUTH
+        $username = $this->input->server('PHP_AUTH_USER');
+        $http_auth = $this->input->server('HTTP_X_AUTH');
+        $password = NULL;
+        if ($username !== NULL)
+        {
+            $password = $this->input->server('PHP_AUTH_PW');
+        }
+        elseif ($http_auth !== NULL)
+        {
+            if (strpos(strtolower($http_auth), 'basic') === 0)
+            {
+                list($username, $password) = explode(':', base64_decode(substr($http_auth, 6)));
+            }
+        }
+		
+		if (! $this->auth->change_password($username, $password, $data->password_new))
+		{
+			$this->response(['status' => FALSE, 'message' => $this->auth->errors()], 401);
+		}
+		
+		$this->xresponse(TRUE, ['message' => $this->auth->messages()]);
+	}
+	
 	function cektoken_get()
 	{
 		$sess['session'] = $this->_check_token();
