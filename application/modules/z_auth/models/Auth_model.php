@@ -320,6 +320,102 @@ class Auth_model extends CI_Model
 	}
 
 	/**
+	 * reset password
+	 *
+	 * @return bool
+	 * @author Mathew
+	 **/
+	public function reset_password($identity, $new) 
+	{
+		$query = $this->db->select('id, password, salt')
+		                  ->where($this->identity_column, $identity)
+		                  ->limit(1)
+		    			  ->order_by('id', 'desc')
+		                  ->get($this->tables['users']);
+
+		if ($query->num_rows() !== 1)
+		{
+			$this->set_error('password_change_unsuccessful');
+			return FALSE;
+		}
+
+		$result = $query->row();
+
+		$new = $this->hash_password($new, $result->salt);
+
+		// store the new password and reset the remember code so all remembered instances have to re-login
+		// also clear the forgotten password code
+		$data = array(
+		    'password' => $new,
+		    'remember_token' => NULL
+		);
+
+		$this->db->update($this->tables['users'], $data, array($this->identity_column => $identity));
+
+		$return = $this->db->affected_rows() == 1;
+		if ($return)
+		{
+			$this->set_message('password_change_successful');
+		}
+		else
+		{
+			$this->set_error('password_change_unsuccessful');
+		}
+
+		return $return;
+	}
+
+	/**
+	 * change password
+	 *
+	 * @return bool
+	 * @author Mathew
+	 **/
+	public function change_password($identity, $old, $new)
+	{
+		$query = $this->db->select('id, password, salt')
+		                  ->where($this->identity_column, $identity)
+		                  ->limit(1)
+		    			  ->order_by('id', 'desc')
+		                  ->get($this->tables['users']);
+
+		if ($query->num_rows() !== 1)
+		{
+			$this->set_error('password_change_unsuccessful');
+			return FALSE;
+		}
+
+		$user = $query->row();
+
+		$old_password_matches = $this->hash_password_db($user->id, $old);
+
+		if ($old_password_matches === TRUE)
+		{
+			// store the new password and reset the remember code so all remembered instances have to re-login
+			$hashed_new_password  = $this->hash_password($new, $user->salt);
+			$data = array(
+			    'password' => $hashed_new_password,
+			    'remember_token' => NULL,
+			);
+
+			$successfully_changed_password_in_db = $this->db->update($this->tables['users'], $data, array($this->identity_column => $identity));
+			if ($successfully_changed_password_in_db)
+			{
+				$this->set_message('password_change_successful');
+			}
+			else
+			{
+				$this->set_error('password_change_unsuccessful');
+			}
+
+			return $successfully_changed_password_in_db;
+		}
+
+		$this->set_error('password_change_unsuccessful');
+		return FALSE;
+	}
+
+	/**
 	 * register
 	 *
 	 * @return bool
@@ -566,6 +662,41 @@ class Auth_model extends CI_Model
 		{
 			return FALSE;
 		}
+	}
+
+	/**
+	 * set_message
+	 *
+	 * Set a message
+	 *
+	 * @return void
+	 * @author Ben Edmunds
+	 **/
+	public function set_message($message)
+	{
+		$this->messages[] = $message;
+
+		return $message;
+	}
+
+	/**
+	 * messages
+	 *
+	 * Get the messages
+	 *
+	 * @return void
+	 * @author Ben Edmunds
+	 **/
+	public function messages()
+	{
+		$_output = '';
+		foreach ($this->messages as $message)
+		{
+			$messageLang = $this->lang->line($message) ? $this->lang->line($message) : '##' . $message . '##';
+			$_output .= $this->message_start_delimiter . $messageLang . $this->message_end_delimiter;
+		}
+
+		return $_output;
 	}
 
 	/**
