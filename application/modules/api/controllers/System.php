@@ -138,6 +138,38 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, ['message' => $this->auth->messages()]);
 	}
 	
+	function reset_passwd_post()
+	{
+		$sess = $this->_check_token();
+		
+		$data = (object) $this->post();
+		
+		$this->load->library('z_auth/auth');
+		
+		// BASIC AUTH
+        $username = $this->input->server('PHP_AUTH_USER');
+        $http_auth = $this->input->server('HTTP_X_AUTH');
+        $password = NULL;
+        if ($username !== NULL)
+        {
+            $password = $this->input->server('PHP_AUTH_PW');
+        }
+        elseif ($http_auth !== NULL)
+        {
+            if (strpos(strtolower($http_auth), 'basic') === 0)
+            {
+                list($username, $password) = explode(':', base64_decode(substr($http_auth, 6)));
+            }
+        }
+		
+		if (! $this->auth->reset_password($username, $password))
+		{
+			$this->response(['status' => FALSE, 'message' => $this->auth->errors()], 401);
+		}
+		
+		$this->xresponse(TRUE, ['message' => $this->auth->messages()]);
+	}
+	
 	function cektoken_get()
 	{
 		$sess['session'] = $this->_check_token();
@@ -285,6 +317,49 @@ class System extends REST_Controller {
 		$result['data'] = $this->system_model->getMenuVal($params);
 		// $this->xresponse(TRUE, $result);
 		$this->response($result);
+	}
+	
+	function role_get()
+	{
+		$sess = $this->_check_token();
+		$arg = (object) $this->input->get();
+		if (! empty($arg->id))
+		{
+			$params['where']['au.id'] = $arg->id;
+		}
+		
+		if (! empty($arg->q)) 
+		{
+			$params['like'] = empty($arg->sf) 
+				? DBX::like_or('au.name, au.description', $arg->q)
+				: DBX::like_or($arg->sf, $arg->q);
+		}
+		
+		$params['select'] = !empty($arg->fs) ? $arg->fs : 'au.name,au.description';
+		$params['page'] = empty($arg->p) ? 1 : $arg->p;
+		$params['rows'] = empty($arg->r) ? 10 : $arg->r;
+		
+		$params['sort'] = empty($arg->s) ? 'au.id' : $arg->s;
+		$params['order'] = empty($arg->o) ? 'desc' : $arg->o;
+		$params['ob'] = empty($arg->ob) ? '' : $arg->ob;
+		
+		$result['data'] = $this->system_model->getUser($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
+	function role_post()
+	{
+		
+	}
+	
+	function role_put()
+	{
+		
+	}
+	
+	function role_delete()
+	{
+		
 	}
 	
 	function rolemenu_get()

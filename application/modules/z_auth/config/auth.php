@@ -37,6 +37,8 @@ $config = [
 	'lockout_time'				=> 600,
 	'forgot_password_expiration' => 0,
 	
+	'message_start_delimiter'	=> '<p>',
+	'message_end_delimiter'		=> '</p>',
 	'error_start_delimiter'		=> '<p>',
 	'error_end_delimiter'		=> '</p>',
 ];

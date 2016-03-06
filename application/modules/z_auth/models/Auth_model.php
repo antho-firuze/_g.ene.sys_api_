@@ -82,6 +82,10 @@ class Auth_model extends CI_Model
 			$this->load->library('z_auth/bcrypt',$params);
 		}
 
+		$this->messages    = array();
+		$this->errors      = array();
+		$this->message_start_delimiter = $this->config->item('message_start_delimiter', 'ion_auth');
+		$this->message_end_delimiter   = $this->config->item('message_end_delimiter', 'ion_auth');
 		$this->error_start_delimiter   = $this->config->item('error_start_delimiter', 'auth');
 		$this->error_end_delimiter     = $this->config->item('error_end_delimiter', 'auth');
 	}
