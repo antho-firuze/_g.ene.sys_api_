@@ -73,7 +73,7 @@ $route['translate_uri_dashes'] = FALSE;
 
 // $route['api/v1/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/'] = 'api/$1/$2';
 $route['api/v1/(:any)/(:any)'] = 'api/$1/$2';
-$route['api/v1/login'] = 'api/system/login';
+$route['api/v1/(:any)/(:any)/(:num)'] = 'api/$1/$2/$3';
 
 // $route['api/v1/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/(:any)'] = 'api/$1/$2/$3'; // Example 4
 // $route['api/v1/system/user/(:num?)(\.)([a-zA-Z0-9_-]+)(.*)'] = 'api/system/user/id/$1/format/$3$4'; // Example 8

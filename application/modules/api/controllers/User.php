@@ -1,10 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require APPPATH . '/modules/api/libraries/REST_Controller.php';
-// require APPPATH . '/modules/z_rest/libraries/REST_Controller.php';
+require APPPATH . '/modules/z_rest/libraries/REST_Controller.php';
 
 class User extends REST_Controller {
-// class User extends CI_Controller {
 	
 	function __construct() {
 		parent::__construct();
