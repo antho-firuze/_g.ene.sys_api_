@@ -69,6 +69,11 @@ class Z_Model extends CI_Model
 		$result = $this->db->get();
 		$num_row = ($result->num_rows() > 0) ? $result->num_rows() : 0;
 		
+		// log_message('error', $params['length'].$params['start']);
+		if ( array_key_exists('start', $params) && array_key_exists('length', $params) )
+		{
+			$this->db->limit($params['length'], $params['start']);
+		}
 		$result = $this->mget_rec($params);
 		
 		$response['total'] = $num_row;

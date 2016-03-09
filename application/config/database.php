@@ -76,7 +76,8 @@ $query_builder = TRUE;
 $db['default'] = array(
 	// 'dsn'	=> 'pgsql:host=119.18.158.218;port=4111;dbname=db_genesys_api;user=postgres;password=admin123',
 	
-	'hostname' => 'pgsql:host=119.18.158.218;port=4111;dbname=db_genesys_api;user=postgres;password=admin123',
+	// 'hostname' => 'pgsql:host=119.18.158.218;port=4111;dbname=db_genesys_api;user=postgres;password=admin123',
+	'hostname' => 'pgsql:host=localhost;port=5432;dbname=db_genesys_api;user=postgres;password=admin123',
 	// 'username' => 'postgres',
 	// 'password' => 'admin123',
 	// 'database' => 'db_genesys_api',

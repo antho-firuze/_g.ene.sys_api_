@@ -44,7 +44,7 @@ class System extends REST_Controller {
 		$params['select'] = 'au.id, au.client_id, au.org_id, au.role_id, au.name, au.description, au.email, 
 			au.photo_url, ac.name as client_name, ao.name as org_name, ar.name as role_name';
 		$params['where']['au.id'] = $id;
-		$user = (object) $this->system_model->getUser($params)[0];
+		$user = (object) $this->system_model->getUserAuthentication($params)[0];
 		$dataUser = [
 			'name'			=> $user->name,
 			'description'	=> $user->description,
@@ -52,7 +52,8 @@ class System extends REST_Controller {
 			'client_name'	=> $user->client_name,
 			'org_name'		=> $user->org_name,
 			'role_name'		=> $user->role_name,
-			'photo_url' 	=> empty($user->photo_url) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_url),
+			// 'photo_url' 	=> empty($user->photo_url) ? urlencode('http://lorempixel.com/160/160/people/') : urlencode($user->photo_url),
+			'photo_url' 	=> urlencode($user->photo_url),
 		];
 		
 		$userConfig = (object) $this->system_model->getUserConfig([
@@ -190,6 +191,7 @@ class System extends REST_Controller {
 		// 		QUERY PARAMETERS
 		// ============================
 		$arg = (object) $this->input->get();
+		$params = (array) $arg;
 		if (! empty($arg->id))
 		{
 			$params['where']['au.id'] = $arg->id;
@@ -203,13 +205,14 @@ class System extends REST_Controller {
 		}
 		
 		$params['select'] = !empty($arg->fs) ? $arg->fs : 'au.name,au.description';
-		$params['page'] = empty($arg->p) ? 1 : $arg->p;
-		$params['rows'] = empty($arg->r) ? 10 : $arg->r;
+		// $params['page'] = empty($arg->p) ? 1 : $arg->p;
+		// $params['rows'] = empty($arg->r) ? 10 : $arg->r;
 		
-		$params['sort'] = empty($arg->s) ? 'au.id' : $arg->s;
-		$params['order'] = empty($arg->o) ? 'desc' : $arg->o;
-		$params['ob'] = empty($arg->ob) ? '' : $arg->ob;
-		
+		// $params['sort'] = empty($arg->s) ? 'au.id' : $arg->s;
+		// $params['order'] = empty($arg->o) ? 'desc' : $arg->o;
+		// $params['ob'] = empty($arg->ob) ? '' : $arg->ob;
+		// log_message('error', $params['length'].$params['start']);
+		// log_message('error', $arg->length);
 		$result['data'] = $this->system_model->getUser($params);
 		$this->xresponse(TRUE, $result);
 	}

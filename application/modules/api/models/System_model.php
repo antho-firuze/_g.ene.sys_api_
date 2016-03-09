@@ -20,7 +20,7 @@ class System_Model extends Z_Model
 		return call_user_func_array( array($this, $method), $arguments);
 	} */
 	
-	function getUser($params)
+	function getUserAuthentication($params)
 	{
 		$params['select']	= !array_key_exists('select', $params) ? "au.*" : $params['select'];
 		$params['table'] 	= "a_user as au";
@@ -30,6 +30,18 @@ class System_Model extends Z_Model
 		$params['where']['au.is_deleted'] 	= '0';
 		
 		return $this->mget_rec($params);
+	}
+	
+	function getUser($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "au.*" : $params['select'];
+		$params['table'] 	= "a_user as au";
+		$params['join'][] 	= ['a_client as ac', 'au.client_id = ac.id', 'left'];
+		$params['join'][] 	= ['a_org as ao', 'au.org_id = ao.id', 'left'];
+		$params['join'][] 	= ['a_role as ar', 'au.role_id = ar.id', 'left'];
+		$params['where']['au.is_deleted'] 	= '0';
+		
+		return $this->mget_rec_count($params);
 	}
 	
 	function getUserConfig($params)
@@ -169,7 +181,13 @@ class System_Model extends Z_Model
 	
 	function createUserRecent($data)
 	{
-		$qry = $this->db->order('id desc')->get_where('a_user_recent', $data, 1);
+		/* $qry = $this->db
+			   ->select('*')
+			   ->from('a_user_recent')
+			   ->where($data)
+			   ->limit(1)
+			   ->order_by('id desc'); */
+		$qry = $this->db->order_by('id desc')->get_where('a_user_recent', $data, 1);
 		if ($qry->num_rows() > 0)
 			return TRUE;
 		
