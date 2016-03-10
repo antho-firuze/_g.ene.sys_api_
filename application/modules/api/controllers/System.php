@@ -204,7 +204,7 @@ class System extends REST_Controller {
 				: DBX::like_or($arg->sf, $arg->q);
 		}
 		
-		$params['select'] = !empty($arg->fs) ? $arg->fs : 'au.name,au.description';
+		// $params['select'] = !empty($arg->fs) ? $arg->fs : 'au.id,au.name,au.description,au.email,';
 		// $params['page'] = empty($arg->p) ? 1 : $arg->p;
 		// $params['rows'] = empty($arg->r) ? 10 : $arg->r;
 		

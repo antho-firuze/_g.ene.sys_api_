@@ -34,7 +34,12 @@ class System_Model extends Z_Model
 	
 	function getUser($params)
 	{
-		$params['select']	= !array_key_exists('select', $params) ? "au.*" : $params['select'];
+		$select = "au.id,au.client_id,au.org_id,au.role_id,au.is_active,au.is_deleted,
+			au.created_by,au.updated_by,au.deleted_by,au.created_at,au.updated_at,au.deleted_at,
+			au.name,au.description,au.email,au.last_login,au.is_online,au.supervisor_id,
+			au.bpartner_id,au.is_fullbpaccess,au.is_expired,au.security_question,au.security_answer,
+			au.ip_address,au.photo_url";
+		$params['select']	= array_key_exists('select', $params) ? $params['select'] : $select;
 		$params['table'] 	= "a_user as au";
 		$params['join'][] 	= ['a_client as ac', 'au.client_id = ac.id', 'left'];
 		$params['join'][] 	= ['a_org as ao', 'au.org_id = ao.id', 'left'];
