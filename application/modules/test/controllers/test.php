@@ -13,6 +13,22 @@ class Test extends CI_Controller {
 		// check_auth_restapi();
 	}
 	
+	function avatar($word)
+	{
+		$set = [
+			'word'		=> $word, 
+			'img_path'	=> 'upload/images/users/',
+			'img_url'	=> base_url().'upload/images/users/', 
+		];
+		$img = create_avatar_img($set);
+		echo $img['image'];
+		return;
+		// header('Content-Type: image/jpeg');
+		// $im = @imagecreatefrompng(base_url().'upload/images/users/'.$img['filename']);
+		// imagepng($im);
+		// imagedestroy($im); 
+	}
+	
 	function key()
 	{
 		// echo get_api_sig();

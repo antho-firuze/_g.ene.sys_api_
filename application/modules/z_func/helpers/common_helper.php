@@ -1,5 +1,124 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+if ( ! function_exists('UUIDv4'))
+{
+	function UUIDv4() 
+	{
+		return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+		// 32 bits for "time_low"
+		mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+		// 16 bits for "time_mid"
+		mt_rand(0, 0xffff),
+		// 16 bits for "time_hi_and_version",
+		// four most significant bits holds version number 4
+		mt_rand(0, 0x0fff) | 0x4000,
+		// 16 bits, 8 bits for "clk_seq_hi_res",
+		// 8 bits for "clk_seq_low",
+		// two most significant bits holds zero and one for variant DCE1.1
+		mt_rand(0, 0x3fff) | 0x8000,
+		// 48 bits for "node"
+		mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+		);
+	}
+}
+
+if ( ! function_exists('create_avatar_img'))
+{
+	function create_avatar_img($data = '', $img_path = '', $img_url = '', $font_path = '')
+	{
+		$defaults = array(
+			'word'		=> '',
+			'img_path'	=> '',
+			'img_url'	=> '',
+			'img_width'	=> '215',
+			'img_height'	=> '215',
+			'img_type'	=> 'png',
+			'font_path'	=> BASEPATH.'fonts/texb.ttf',
+			'word_length'	=> 1,
+			'font_size'	=> 100,
+			'img_id'	=> '',
+		);
+		
+		foreach ($defaults as $key => $val)
+		{
+			if ( ! is_array($data) && empty($$key))
+			{
+				$$key = $val;
+			}
+			else
+			{
+				$$key = isset($data[$key]) ? $data[$key] : $val;
+			}
+		}
+		
+		if ($img_path === '' OR $img_url === ''
+			OR ! is_dir($img_path) OR ! is_really_writable($img_path)
+			OR ! extension_loaded('gd'))
+		{
+			return FALSE;
+		}
+		
+		$im = function_exists('imagecreatetruecolor')
+			? imagecreatetruecolor($img_width, $img_height)
+			: imagecreate($img_width, $img_height);
+		
+		$i = strtoupper(substr($word, 0, 1));
+		$r = rand(0, 255);
+		$g = rand(0, 255);
+		$b = rand(0, 255);
+		$x = (imagesx($im) - $font_size * strlen($i)) / 2;
+		$y = (imagesy($im) + ($font_size-($font_size*0.25))) / 2;
+		$bg = imagecolorallocate($im, $r, $g, $b);
+		$tc = imagecolorallocate($im, 255, 255, 255);
+		
+		// Create the rectangle
+		ImageFilledRectangle($im, 0, 0, $img_width, $img_height, $bg);
+		
+		$use_font = ($font_path !== '' && file_exists($font_path) && function_exists('imagettftext'));
+		if ($use_font === FALSE)
+		{
+			($font_size > 5) && $font_size = 5;
+			imagestring($im, $font_size, $x, $y, $i, $tc);
+		}
+		else
+		{
+			// ($font_size > 30) && $font_size = 30;
+			imagettftext($im, $font_size, 0, $x, $y, $tc, $font_path, $i);
+		}
+
+		// -----------------------------------
+		//  Generate the image
+		// -----------------------------------
+		$now = microtime(TRUE);
+		$img_url = rtrim($img_url, '/').'/';
+
+		if ($img_type == 'jpeg')
+		{
+			$img_filename = $now.'.jpg';
+			imagejpeg($im, $img_path.$img_filename);
+		}
+		elseif ($img_type == 'png')
+		{
+			$img_filename = $now.'.png';
+			imagepng($im, $img_path.$img_filename);
+		}
+		else
+		{
+			return FALSE;
+		}
+
+		$img = '<img '.($img_id === '' ? '' : 'id="'.$img_id.'"').' src="'.$img_url.$img_filename.'" style="width: '.$img_width.'; height: '.$img_height .'; border: 0;" alt=" " />';
+		ImageDestroy($im);
+
+		return array(
+			'image' 	=> $img, 
+			'file_path' => $img_path.$img_filename, 
+			'file_url'	=> $img_url.$img_filename,
+			'filename' 	=> $img_filename
+		);
+	}
+}
+	
 if ( ! function_exists('xresponse'))
 {
 	function xresponse($status=TRUE, $response=array(), $statusHeader=200)
@@ -22,6 +141,78 @@ if ( ! function_exists('xresponse'))
 	}
 }
 	
+if ( ! function_exists('salt'))
+{
+	/**
+	 * Generates a random salt value.
+	 *
+	 * Salt generation code taken from https://github.com/ircmaxell/password_compat/blob/master/lib/password.php
+	 *
+	 * @return void
+	 * @author Anthony Ferrera
+	 **/
+	function salt($salt_length=22)
+	{
+
+		$raw_salt_len = 16;
+
+ 		$buffer = '';
+        $buffer_valid = false;
+
+        if (function_exists('mcrypt_create_iv') && !defined('PHALANGER')) {
+            $buffer = mcrypt_create_iv($raw_salt_len, MCRYPT_DEV_URANDOM);
+            if ($buffer) {
+                $buffer_valid = true;
+            }
+        }
+
+        if (!$buffer_valid && function_exists('openssl_random_pseudo_bytes')) {
+            $buffer = openssl_random_pseudo_bytes($raw_salt_len);
+            if ($buffer) {
+                $buffer_valid = true;
+            }
+        }
+
+        if (!$buffer_valid && @is_readable('/dev/urandom')) {
+            $f = fopen('/dev/urandom', 'r');
+            $read = strlen($buffer);
+            while ($read < $raw_salt_len) {
+                $buffer .= fread($f, $raw_salt_len - $read);
+                $read = strlen($buffer);
+            }
+            fclose($f);
+            if ($read >= $raw_salt_len) {
+                $buffer_valid = true;
+            }
+        }
+
+        if (!$buffer_valid || strlen($buffer) < $raw_salt_len) {
+            $bl = strlen($buffer);
+            for ($i = 0; $i < $raw_salt_len; $i++) {
+                if ($i < $bl) {
+                    $buffer[$i] = $buffer[$i] ^ chr(mt_rand(0, 255));
+                } else {
+                    $buffer .= chr(mt_rand(0, 255));
+                }
+            }
+        }
+
+        $salt = $buffer;
+
+        // encode string with the Base64 variant used by crypt
+        $base64_digits   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+        $bcrypt64_digits = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $base64_string   = base64_encode($salt);
+        $salt = strtr(rtrim($base64_string, '='), $base64_digits, $bcrypt64_digits);
+
+	    $salt = substr($salt, 0, $salt_length);
+
+
+		return $salt;
+
+	}
+}
+
 if ( ! function_exists('urlsafeB64Encode'))
 {
 	function urlsafeB64Encode($input)

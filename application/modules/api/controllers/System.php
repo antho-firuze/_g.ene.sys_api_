@@ -299,6 +299,11 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, $result);
 	}
 	
+	function userUploadAvatar_post()
+	{
+		
+	}
+	
 	function searchMenu_get()
 	{
 		// $sess = $this->_check_token();
