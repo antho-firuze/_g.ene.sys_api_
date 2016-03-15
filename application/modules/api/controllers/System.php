@@ -428,6 +428,30 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, $result);
 	}
 	
+	function info_get()
+	{
+		$sess = $this->_check_token();
+		
+		$arg = (object) $this->input->get();
+		$params = (array) $arg;
+		if (! empty($arg->id))
+		{
+			$params['where']['ai.id'] = $arg->id;
+		}
+		if (! empty($arg->q)) 
+		{
+			$params['like'] = empty($arg->sf) 
+				? DBX::like_or('ai.description', $arg->q)
+				: DBX::like_or($arg->sf, $arg->q);
+		}
+		if (! empty($arg->validf)) 
+		{
+			$params['where']['ai.valid_from >='] = $arg->validf;
+		}
+		$result['data'] = $this->system_model->getInfo($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
 	
 	function rolemenutest_get()
 	{

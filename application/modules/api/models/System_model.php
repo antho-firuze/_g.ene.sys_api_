@@ -215,4 +215,13 @@ class System_Model extends Z_Model
 		return $this->db->affected_rows();
 	}
 	
+	function getInfo($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "ai.*" : $params['select'];
+		$params['table'] 	= "a_info as ai";
+		$params['where']['ai.is_deleted'] 	= '0';
+		
+		return $this->mget_rec_count($params);
+	}
+	
 }
