@@ -14,7 +14,7 @@ class System extends REST_Controller {
 	{
 		$this->load->library('z_auth/auth');
 		
-		// ADDITIONAL KEY
+		// CHECK X-API-KEY HEADER
 		$apps_key  	= $this->input->get_request_header('X-API-KEY');
 		if (! $this->db->where('api_token', $apps_key)->get('a_system')->row() ) 
 			$this->response(['status' => FALSE, 'message' => 'What are you doing...?'], 400);
