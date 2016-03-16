@@ -434,6 +434,9 @@ class System extends REST_Controller {
 		
 		$arg = (object) $this->input->get();
 		$params = (array) $arg;
+		
+		// $params['where']['ai.client_id'] = $GLOBALS['identifier']['client_id'];
+		// $params['where']['ai.org_id'] 	 = $GLOBALS['identifier']['org_id'];
 		if (! empty($arg->id))
 		{
 			$params['where']['ai.id'] = $arg->id;
@@ -446,8 +449,19 @@ class System extends REST_Controller {
 		}
 		if (! empty($arg->validf)) 
 		{
-			$params['where']['ai.valid_from >='] = $arg->validf;
+			$params['where']['ai.valid_from <='] = $arg->validf;
 		}
+		$result['data'] = $this->system_model->getInfo($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
+	function infolist_get()
+	{
+		$sess = $this->_check_token();
+		
+		$params['where']['ai.client_id'] = $GLOBALS['identifier']['client_id'];
+		$params['where']['ai.org_id'] 	 = $GLOBALS['identifier']['org_id'];
+		$params['where']['ai.valid_from <='] = datetime_db_format();
 		$result['data'] = $this->system_model->getInfo($params);
 		$this->xresponse(TRUE, $result);
 	}

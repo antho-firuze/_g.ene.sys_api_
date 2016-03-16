@@ -1127,9 +1127,9 @@ if ( ! function_exists('set_doc_last_number'))
 	}
 }
 // DATE & TIME ===========================
-if ( ! function_exists('first_date'))
+if ( ! function_exists('date_first'))
 {
-	function first_date($format=NULL, $y, $m) {
+	function date_first($format=NULL, $y, $m) {
 		
 		if (empty($format)) 
 			$format = 'Y-m-d';
@@ -1138,9 +1138,9 @@ if ( ! function_exists('first_date'))
 	}
 }
 
-if ( ! function_exists('last_date'))
+if ( ! function_exists('date_last'))
 {
-	function last_date($format=NULL, $y, $m) {
+	function date_last($format=NULL, $y, $m) {
 		
 		if (empty($format)) 
 			$format = 'Y-m-d';
@@ -1150,27 +1150,34 @@ if ( ! function_exists('last_date'))
 	}
 }
 
-if ( ! function_exists('db_date_format'))
+if ( ! function_exists('date_db_format'))
 {
-	function db_date_format($date=NULL)
+	function date_db_format($date=NULL)
 	{
 		if ( empty($date) )
-			return NULL;
+			return date('Y-m-d');
 		
-		// dd/mm/yyyy => yyyy-mm-dd
-		// $tmp = explode('/', $date);
-		// return $tmp[2].'-'.$tmp[1].'-'.$tmp[0];
-		
-		// dd/mm/yyyy => yyyy-mm-dd
 		list($tmp[2], $tmp[1], $tmp[0]) = explode('/', $date);
 		return implode('-', $tmp);
 	}
 }
 
-if ( ! function_exists('mk_date'))
+if ( ! function_exists('datetime_db_format'))
+{
+	function datetime_db_format($date=NULL)
+	{
+		if ( empty($date) )
+			return date('Y-m-d h:i:s');
+		
+		list($tmp[2], $tmp[1], $tmp[0]) = explode('/', $date);
+		return implode('-', $tmp);
+	}
+}
+
+if ( ! function_exists('date_mk'))
 {
 	// FORMAT $date = 'Y-m-d'
-	function mk_date($date) {
+	function date_mk($date) {
 		list($y, $m, $d) = explode('-', $date);
 		return mktime(
 				0,
@@ -1183,9 +1190,9 @@ if ( ! function_exists('mk_date'))
 	}
 }
 
-if ( ! function_exists('set_date'))
+if ( ! function_exists('date_set'))
 {
-	function set_date($format=NULL, $date, $d=0,$m=0,$y=0) {
+	function date_set($format=NULL, $date, $d=0,$m=0,$y=0) {
 		
 		if (empty($format)) 
 			$format = 'Y-m-d';
@@ -1202,9 +1209,9 @@ if ( ! function_exists('set_date'))
 	}
 }
 
-if ( ! function_exists('set_datetime'))
+if ( ! function_exists('datetime_set'))
 {
-	function set_datetime($date,$d=0,$m=0,$y=0,$h=0,$i=0,$s=0) {
+	function datetime_set($date,$d=0,$m=0,$y=0,$h=0,$i=0,$s=0) {
 
 		$cd = strtotime($date);
 		return date(
@@ -1220,9 +1227,9 @@ if ( ! function_exists('set_datetime'))
 	}
 }
 
-if ( ! function_exists('set_datetime_weekday'))
+if ( ! function_exists('datetime_weekday'))
 {
-	function set_datetime_weekday($date,$d=0,$m=0,$y=0,$h=0,$i=0,$s=0) {
+	function datetime_weekday($date,$d=0,$m=0,$y=0,$h=0,$i=0,$s=0) {
 
 		$cd = strtotime($date);
 		$new = date( 'Y-m-d h:i:s', mktime(
