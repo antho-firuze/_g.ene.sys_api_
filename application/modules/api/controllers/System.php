@@ -227,7 +227,6 @@ class System extends REST_Controller {
 		
 		$additional_data = [
 			'client_id'		=> $sess->client_id,
-			'api_token'		=> get_api_sig(),
 			'created_by'	=> $sess->user_id,
 			'created_at'	=> date('Y-m-d H:i:s')
 		];
@@ -238,7 +237,7 @@ class System extends REST_Controller {
 			$this->xresponse(FALSE, ['message' => $this->auth->errors()], 401);
 		}
 
-		$this->xresponse(TRUE);
+		$this->xresponse(TRUE, ['message' => $this->lang->line('success_saving')]);
 	}
 	
 	function user_put()
@@ -251,17 +250,25 @@ class System extends REST_Controller {
 			$this->xresponse(FALSE, NULL, 400);
 		}
 		
-		// Content-Type: application/json
-		// Content-Type: application/x-www-form-urlencoded 
 		$data = (object) $this->put();
 		
-		$data->updated_by = $sess->user_id;
-		$data->updated_at = date('Y-m-d H:i:s');
+		$fields = ['name', 'description', 'email'];
+		foreach($fields as $f){
+			if (array_key_exists($f, $data)){
+				$datas[$f] = $data->{$f};
+			}
+		}
+		$datas['updated_by'] = $sess->user_id;
+		$datas['updated_at'] = date('Y-m-d H:i:s');
 		
-		if (! $this->system_model->updateUser($data, ['id'=>$arg->id]))
+		if (! $this->system_model->updateUser($datas, ['id'=>$arg->id]))
 			$this->xresponse(FALSE, ['message' => $this->db->error()->message], 401);
 			
-		$this->xresponse(TRUE);
+		if (! empty($data->password))
+			if (! $this->auth->reset_password($data->name, $data->password))
+				$this->response(['status' => FALSE, 'message' => $this->auth->errors()], 401);
+		
+		$this->xresponse(TRUE, ['message' => $this->lang->line('success_update')]);
 	}
 	
 	function user_delete()
@@ -279,7 +286,7 @@ class System extends REST_Controller {
 			$this->xresponse(FALSE, ['message' => $this->system_model->errors()], 401);
 		}
 		
-		$this->xresponse(TRUE);
+		$this->xresponse(TRUE, ['message' => $this->lang->line('success_delete')]);
 	}
 
 	function userRecent_post()
