@@ -263,10 +263,13 @@ class System extends REST_Controller {
 		
 		if (! $this->system_model->updateUser($datas, ['id'=>$arg->id]))
 			$this->xresponse(FALSE, ['message' => $this->db->error()->message], 401);
-			
-		if (! empty($data->password))
+		
+		// log_message('error', $data->name .':'. $data->password);
+		if (! empty($data->password)){
+			$this->load->library('z_auth/auth');
 			if (! $this->auth->reset_password($data->name, $data->password))
 				$this->response(['status' => FALSE, 'message' => $this->auth->errors()], 401);
+		}
 		
 		$this->xresponse(TRUE, ['message' => $this->lang->line('success_update')]);
 	}
