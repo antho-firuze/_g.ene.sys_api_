@@ -2172,19 +2172,36 @@ abstract class REST_Controller extends CI_Controller {
 		// CREATE TOKEN
 		$this->load->library('z_jwt/jwt');
 		try {
-			$token['token']  = $this->jwt->createToken($GLOBALS['identifier']);
-			$token['expire'] = $GLOBALS['identifier']['exp'];
+			// ENV: 'development' | 'production' | 'testing'
+			if ( ENVIRONMENT == 'production' ) {
+				$env = [];
+				if (empty($GLOBALS['identifier'])) {
+					$status	= FALSE;
+					$data	= [];
+				} else {
+					$token['token']  = $this->jwt->createToken( $data );
+					$token['expire'] = $GLOBALS['identifier']['exp'];
+				}
+			} else {
+				$env  = ['ENVIRONMENT' => ENVIRONMENT];
+				if (empty($GLOBALS['identifier'])) {
+					$status	= FALSE;
+					$token	= [];
+				} else {
+					$token['token']  = $this->jwt->createToken( $data );
+					$token['expire'] = $GLOBALS['identifier']['exp'];
+				}
+			}
 			
 		} catch (Exception $e) {
 			$this->response(['status' => FALSE, 'message' => $e->getMessage()], 500);
 		}
 		
-		
 		$elapsed = $BM->elapsed_time('total_execution_time_start', 'total_execution_time_end');
 		
 		header("HTTP/1.0 $statusHeader");
 		header('Content-Type: application/json');
-		echo json_encode(array_merge(['status' => $status, 'execution_time' => $elapsed], $token, $response));
+		echo json_encode(array_merge(['status' => $status, 'execution_time' => $elapsed], $env, $token, $response));
 		
 		log_message('info', 'Final output sent to browser');
 		log_message('debug', 'Total execution time: '.$elapsed);
@@ -2198,13 +2215,34 @@ abstract class REST_Controller extends CI_Controller {
 		
 		$jwt = $this->input->server('HTTP_TOKEN');
 		try {
-			$data = $this->jwt->checkToken($jwt);
-			$GLOBALS['identifier'] = [
-				'user_id' 	=> $data->user_id,
-				'client_id'	=> $data->client_id,
-				'org_id'	=> $data->org_id,
-				'role_id'	=> $data->role_id
-			];
+			// ENV: 'development' | 'production' | 'testing'
+			if ( ENVIRONMENT == 'production' ) {
+				$env = [];
+				if (empty($GLOBALS['identifier'])) {
+					$status	= FALSE;
+					$data	= [];
+				}
+				
+				$data = $this->jwt->checkToken($jwt);
+				$GLOBALS['identifier'] = [
+					'user_id' 	=> $data->user_id,
+					'client_id'	=> $data->client_id,
+					'org_id'	=> $data->org_id,
+					'role_id'	=> $data->role_id
+				];
+			} else {
+				$data = [];
+				if (! empty($jwt)) {
+					$data = $this->jwt->checkToken($jwt);
+					$GLOBALS['identifier'] = [
+						'user_id' 	=> $data->user_id,
+						'client_id'	=> $data->client_id,
+						'org_id'	=> $data->org_id,
+						'role_id'	=> $data->role_id
+					];
+				}
+			}
+			
 		} catch (Exception $e) {
 			$this->response(['status' => FALSE, 'message' => $e->getMessage()], 401);
 		}

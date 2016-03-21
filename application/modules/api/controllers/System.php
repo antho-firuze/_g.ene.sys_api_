@@ -292,6 +292,16 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, ['message' => $this->lang->line('success_delete')]);
 	}
 
+	function userlist_get()
+	{
+		$sess = $this->_check_token();
+		
+		$params['where']['au.client_id'] = 11; //$sess->client_id;
+		$params['where']['au.org_id'] 	 = 11; //$sess->org_id;
+		$result['data'] = $this->system_model->getUser($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
 	function userRecent_post()
 	{
 		$sess = $this->_check_token();
@@ -445,8 +455,8 @@ class System extends REST_Controller {
 		$arg = (object) $this->input->get();
 		$params = (array) $arg;
 		
-		// $params['where']['ai.client_id'] = $GLOBALS['identifier']['client_id'];
-		// $params['where']['ai.org_id'] 	 = $GLOBALS['identifier']['org_id'];
+		// $params['where']['ai.client_id'] = $sess->client_id;
+		// $params['where']['ai.org_id'] 	 = $sess->org_id;
 		if (! empty($arg->id))
 		{
 			$params['where']['ai.id'] = $arg->id;
@@ -469,8 +479,8 @@ class System extends REST_Controller {
 	{
 		$sess = $this->_check_token();
 		
-		$params['where']['ai.client_id'] = $GLOBALS['identifier']['client_id'];
-		$params['where']['ai.org_id'] 	 = $GLOBALS['identifier']['org_id'];
+		$params['where']['ai.client_id'] = $sess->client_id;
+		$params['where']['ai.org_id'] 	 = $sess->org_id;
 		$params['where']['ai.valid_from <='] = datetime_db_format();
 		$result['data'] = $this->system_model->getInfo($params);
 		$this->xresponse(TRUE, $result);
