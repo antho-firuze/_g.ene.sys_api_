@@ -333,27 +333,25 @@ class System extends REST_Controller {
 		
 	}
 	
-	function searchMenu_get()
+	function menulist_get()
 	{
-		// $sess = $this->_check_token();
+		$sess = $this->_check_token();
 		
 		$arg = (object) $this->input->get();
 		
 		$result['data'] = [];
+		
+		$params['select'] = "am.name, am.url, am.icon";
 		if (! empty($arg->q)) 
 		{
 			$params['like'] = empty($arg->sf) 
 				? DBX::like_or('am.name', $arg->q)
 				: DBX::like_or($arg->sf, $arg->q);
 			
-			$params['select'] = "am.name, am.url, am.icon";
 		}
-		$result['status'] = TRUE;
 		
-		// $result['data'] = $this->system_model->getMenu($params);
-		$result['data'] = $this->system_model->getMenuVal($params);
-		// $this->xresponse(TRUE, $result);
-		$this->response($result);
+		$result['data'] = $this->system_model->getMenu($params);
+		$this->xresponse(true, $result);
 	}
 	
 	function role_get()
@@ -501,7 +499,7 @@ class System extends REST_Controller {
 		
 		$params = $this->input->get();
 		
-		$result['data'] = [];
+		// $result['data'] = [];
 		
 		
 		if (key_exists('q', $params)) 
