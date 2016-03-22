@@ -296,8 +296,17 @@ class System extends REST_Controller {
 	{
 		$sess = $this->_check_token();
 		
-		$params['where']['au.client_id'] = 11; //$sess->client_id;
-		$params['where']['au.org_id'] 	 = 11; //$sess->org_id;
+		$id = $this->input->get('id');
+		$id = is_numeric($id) ? $id : -1;
+		
+		$result['data'] = [];
+		
+		$params['where']['au.client_id'] = $sess->client_id;
+		$params['where']['au.org_id'] 	 = $sess->org_id;
+		if ($id >= 0)
+		{
+			$params['where']['au.id'] 	 = $id;
+		}
 		$result['data'] = $this->system_model->getUser($params);
 		$this->xresponse(TRUE, $result);
 	}
@@ -486,6 +495,27 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, $result);
 	}
 	
+	function provincelist_get()
+	{
+		$sess = $this->_check_token();
+		
+		$params = $this->input->get();
+		
+		$result['data'] = [];
+		
+		
+		if (key_exists('q', $params)) 
+			$params['like'] = empty($arg->sf) 
+				? DBX::like_or('name', $arg->q)
+				: DBX::like_or($arg->sf, $arg->q);
+		if (key_exists('id', $params)) 
+			$params['where']['id'] = $params->id;
+		if (key_exists('country_id', $params)) 
+			$params['where']['country_id'] = $params->country_id;
+		
+		$result['data'] = $this->system_model->getProvince($params);
+		$this->xresponse(TRUE, $result);
+	}
 	
 	function rolemenutest_get()
 	{

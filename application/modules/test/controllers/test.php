@@ -64,14 +64,32 @@ class Test extends CI_Controller {
 	
 	function arr()
 	{
-		$additional_data = [
-			'client_id'	=> '7777'
-		];
-		echo $additional_data['client_id'];
+		$result;
+		$result2['coba'] = 'isi-coba';
+		
+		// $result3 = array_merge($result, $result5, $result2);
+		
+		// var_dump($result3);
+		extract($result);
+		echo $data;
+		// echo empty([])?'empty':'not empty';
+		// echo count($result);
+		// print_r(array_values($result));
+		
+		// $additional_data = [
+			// 'client_id'	=> '7777'
+		// ];
+		// echo $additional_data['client_id'];
 	}
 	
 	function tis()
 	{
+		$id = '25';
+		// $id = (int) $id;
+		$id = intval($id);
+		echo $id;
+		return;
+		
 		$a = 1;
 		$b = 0;
 		$c = 3;

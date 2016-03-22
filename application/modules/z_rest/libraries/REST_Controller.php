@@ -2164,32 +2164,25 @@ abstract class REST_Controller extends CI_Controller {
 		if (! is_numeric($statusHeader))
 			show_error('Status codes must be numeric', 500);
 		
-		if (! empty($response))
-			$response = is_array($response) ? $response : array($response);
-		else
-			$response = array();
-		
 		// CREATE TOKEN
 		$this->load->library('z_jwt/jwt');
 		try {
+			$data = empty($GLOBALS['identifier']) ? [] : $GLOBALS['identifier'];
+			$token = 'invalid';
+			$token_exp = 'invalid';
+			
 			// ENV: 'development' | 'production' | 'testing'
 			if ( ENVIRONMENT == 'production' ) {
-				$env = [];
-				if (empty($GLOBALS['identifier'])) {
-					$status	= FALSE;
-					$data	= [];
-				} else {
-					$token['token']  = $this->jwt->createToken( $data );
-					$token['expire'] = $GLOBALS['identifier']['exp'];
+				if (! empty($data)) {
+					$jwt  = $this->jwt->createToken( $data );
+					$token 	   = $jwt->token;
+					$token_exp = $jwt->expire;
 				}
 			} else {
-				$env  = ['ENVIRONMENT' => ENVIRONMENT];
-				if (empty($GLOBALS['identifier'])) {
-					$status	= FALSE;
-					$token	= [];
-				} else {
-					$token['token']  = $this->jwt->createToken( $data );
-					$token['expire'] = $GLOBALS['identifier']['exp'];
+				if (! empty($data)) {
+					$jwt  = $this->jwt->createToken( $data );
+					$token 	   = $jwt->token;
+					$token_exp = $jwt->expire;
 				}
 			}
 			
@@ -2199,9 +2192,15 @@ abstract class REST_Controller extends CI_Controller {
 		
 		$elapsed = $BM->elapsed_time('total_execution_time_start', 'total_execution_time_end');
 		
+		$output['status'] = $status;
+		$output['execution_time'] = $elapsed;
+		$output['environment'] = ENVIRONMENT;
+		$output['token'] = $token;
+		$output['expire'] = $token_exp;
+		
 		header("HTTP/1.0 $statusHeader");
 		header('Content-Type: application/json');
-		echo json_encode(array_merge(['status' => $status, 'execution_time' => $elapsed], $env, $token, $response));
+		echo json_encode(array_merge($output, $response));
 		
 		log_message('info', 'Final output sent to browser');
 		log_message('debug', 'Total execution time: '.$elapsed);
@@ -2213,15 +2212,14 @@ abstract class REST_Controller extends CI_Controller {
 	{
 		$this->load->library('z_jwt/jwt');
 		
+		$data = [];
 		$jwt = $this->input->server('HTTP_TOKEN');
 		try {
 			// ENV: 'development' | 'production' | 'testing'
 			if ( ENVIRONMENT == 'production' ) {
-				$env = [];
-				if (empty($GLOBALS['identifier'])) {
-					$status	= FALSE;
-					$data	= [];
-				}
+				
+				if (empty($jwt))
+					$this->response(['status' => FALSE, 'message' => 'Invalid Token !'], 401);
 				
 				$data = $this->jwt->checkToken($jwt);
 				$GLOBALS['identifier'] = [
@@ -2231,7 +2229,7 @@ abstract class REST_Controller extends CI_Controller {
 					'role_id'	=> $data->role_id
 				];
 			} else {
-				$data = [];
+				
 				if (! empty($jwt)) {
 					$data = $this->jwt->checkToken($jwt);
 					$GLOBALS['identifier'] = [
@@ -2240,6 +2238,8 @@ abstract class REST_Controller extends CI_Controller {
 						'org_id'	=> $data->org_id,
 						'role_id'	=> $data->role_id
 					];
+				} else {
+					$data = (object) $this->input->get();
 				}
 			}
 			

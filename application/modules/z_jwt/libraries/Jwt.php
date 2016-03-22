@@ -53,9 +53,12 @@ class JWT
 			'data' => array_merge($payload)	// Data to be included
 		];
 		
-		$GLOBALS['identifier']['exp'] = $this->config->item('exp', 'jwt');
+		$result['token']  = JWT::encode($assets, $key, $algo);
+		$result['expire'] = $this->config->item('exp', 'jwt');
+		// $GLOBALS['identifier']['exp'] = $this->config->item('exp', 'jwt');
 		
-		return JWT::encode($assets, $key, $algo);
+		// return JWT::encode($assets, $key, $algo);
+		return (object)$result;
 	}
 
 	/*

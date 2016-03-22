@@ -22,30 +22,30 @@ class Frontend extends REST_Controller {
 		return call_user_func_array(array($this, $controller_method), $params);
 	}
 
-	function menu_get()
+	function menulist_get()
 	{
-		$arg = (object) $this->input->get();
+		$org_id = $this->input->get('org_id');
+		$org_id = is_numeric($org_id) ? $org_id : -1;
 		
-		$result['status'] = true;
 		$result['data'] = [];
-		if ($arg->id >= 0)
+		if ($org_id >= 0)
 		{
-			$result['data'] = $this->frontend_model->getMenu($arg->id);
+			$result['data'] = $this->frontend_model->getMenu($org_id);
 		}
-		$this->response($result);
+		$this->xresponse(true, $result);
 	}
 	
 	function dashboard_get()
 	{
-		$arg = (object) $this->input->get();
+		$id = $this->input->get('id');
+		$id = is_numeric($id) ? $id : -1;
 		
-		$result['status'] = true;
 		$result['data'] = [];
-		if ($arg->id >= 0)
+		if ($id >= 0)
 		{
-			$result['data'] = $this->frontend_model->getDashboard($arg->id);
+			$result['data'] = $this->frontend_model->getDashboard($id);
 		}
-		$this->response($result);
+		$this->xresponse(true, $result);
 	}
 	
 	function infolist_get()
@@ -59,9 +59,8 @@ class Frontend extends REST_Controller {
 			$params['where']['ai.org_id'] 	 = $arg->org_id;
 		$params['where']['ai.valid_from <='] = datetime_db_format();
 
-		$result['status'] = true;
 		$result['data'] = $this->frontend_model->getInfo($params);
-		$this->response($result);
+		$this->xresponse(true, $result);
 	}
 	
 }

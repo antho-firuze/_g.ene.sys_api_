@@ -224,4 +224,12 @@ class System_Model extends Z_Model
 		return $this->mget_rec_count($params);
 	}
 	
+	function getProvince($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "*" : $params['select'];
+		$params['table'] 	= "c_2province";
+		
+		return $this->mget_rec_count($params);
+	}
+	
 }
