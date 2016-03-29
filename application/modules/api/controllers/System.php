@@ -499,12 +499,10 @@ class System extends REST_Controller {
 		
 		$params = $this->input->get();
 		
-		// $result['data'] = [];
-		
 		if (key_exists('q', $params)) 
-			$params['like'] = empty($arg->sf) 
-				? DBX::like_or('name', $arg->q)
-				: DBX::like_or($arg->sf, $arg->q);
+			$params['like'] = empty($params['sf']) 
+				? DBX::like_or('name', $params['q'])
+				: DBX::like_or($params['sf'], $params['q']);
 		if (key_exists('id', $params)) 
 			$params['where']['id'] = $params->id;
 		if (key_exists('country_id', $params)) 
