@@ -504,9 +504,9 @@ class System extends REST_Controller {
 				? DBX::like_or('name', $params['q'])
 				: DBX::like_or($params['sf'], $params['q']);
 		if (key_exists('id', $params)) 
-			$params['where']['id'] = $params->id;
+			$params['where']['id'] = $params['id'];
 		if (key_exists('country_id', $params)) 
-			$params['where']['country_id'] = $params->country_id;
+			$params['where']['country_id'] = $params['country_id'];
 		
 		$result['data'] = $this->system_model->getProvince($params);
 		$this->xresponse(TRUE, $result);
