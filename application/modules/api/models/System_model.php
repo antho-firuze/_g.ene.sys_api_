@@ -213,10 +213,42 @@ class System_Model extends Z_Model
 		return $this->mget_rec_count($params);
 	}
 	
+	function getCountry($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "*" : $params['select'];
+		$params['table'] 	= "c_1country";
+		
+		return $this->mget_rec_count($params);
+	}
+	
 	function getProvince($params)
 	{
 		$params['select']	= !array_key_exists('select', $params) ? "*" : $params['select'];
 		$params['table'] 	= "c_2province";
+		
+		return $this->mget_rec_count($params);
+	}
+	
+	function getCity($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "*" : $params['select'];
+		$params['table'] 	= "c_3city";
+		
+		return $this->mget_rec_count($params);
+	}
+	
+	function getDistrict($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "*" : $params['select'];
+		$params['table'] 	= "c_4district";
+		
+		return $this->mget_rec_count($params);
+	}
+	
+	function getVillage($params)
+	{
+		$params['select']	= !array_key_exists('select', $params) ? "*" : $params['select'];
+		$params['table'] 	= "c_5village";
 		
 		return $this->mget_rec_count($params);
 	}

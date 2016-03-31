@@ -493,6 +493,23 @@ class System extends REST_Controller {
 		$this->xresponse(TRUE, $result);
 	}
 	
+	function countrylist_get()
+	{
+		$sess = $this->_check_token();
+		
+		$params = $this->input->get();
+		
+		if (key_exists('q', $params)) 
+			$params['like'] = empty($params['sf']) 
+				? DBX::like_or('name', $params['q'])
+				: DBX::like_or($params['sf'], $params['q']);
+		if (key_exists('id', $params)) 
+			$params['where']['id'] = $params['id'];
+		
+		$result['data'] = $this->system_model->getCountry($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
 	function provincelist_get()
 	{
 		$sess = $this->_check_token();
@@ -509,6 +526,63 @@ class System extends REST_Controller {
 			$params['where']['country_id'] = $params['country_id'];
 		
 		$result['data'] = $this->system_model->getProvince($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
+	function citylist_get()
+	{
+		$sess = $this->_check_token();
+		
+		$params = $this->input->get();
+		
+		if (key_exists('q', $params)) 
+			$params['like'] = empty($params['sf']) 
+				? DBX::like_or('name', $params['q'])
+				: DBX::like_or($params['sf'], $params['q']);
+		if (key_exists('id', $params)) 
+			$params['where']['id'] = $params['id'];
+		if (key_exists('province_id', $params)) 
+			$params['where']['province_id'] = $params['province_id'];
+		
+		$result['data'] = $this->system_model->getCity($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
+	function districtlist_get()
+	{
+		$sess = $this->_check_token();
+		
+		$params = $this->input->get();
+		
+		if (key_exists('q', $params)) 
+			$params['like'] = empty($params['sf']) 
+				? DBX::like_or('name', $params['q'])
+				: DBX::like_or($params['sf'], $params['q']);
+		if (key_exists('id', $params)) 
+			$params['where']['id'] = $params['id'];
+		if (key_exists('city_id', $params)) 
+			$params['where']['city_id'] = $params['city_id'];
+		
+		$result['data'] = $this->system_model->getDistrict($params);
+		$this->xresponse(TRUE, $result);
+	}
+	
+	function villagelist_get()
+	{
+		$sess = $this->_check_token();
+		
+		$params = $this->input->get();
+		
+		if (key_exists('q', $params)) 
+			$params['like'] = empty($params['sf']) 
+				? DBX::like_or('name', $params['q'])
+				: DBX::like_or($params['sf'], $params['q']);
+		if (key_exists('id', $params)) 
+			$params['where']['id'] = $params['id'];
+		if (key_exists('district_id', $params)) 
+			$params['where']['district_id'] = $params['district_id'];
+		
+		$result['data'] = $this->system_model->getVillage($params);
 		$this->xresponse(TRUE, $result);
 	}
 	
