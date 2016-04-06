@@ -252,15 +252,19 @@ class System extends REST_Controller {
 		
 		$data = (object) $this->put();
 		
-		$fields = ['name', 'description', 'email', 'supervisor_id'];
+		$fields = ['name', 'description', 'email', 'is_active', 'is_fullbpaccess', 'supervisor_id'];
 		foreach($fields as $f){
 			if (array_key_exists($f, $data)){
 				$datas[$f] = $data->{$f};
 			}
 		}
+		// CHECK VALIDATIONS
+		$datas['is_active'] 			= empty($datas['is_active']) ? 0 : 1; 
+		$datas['is_fullbpaccess'] = empty($datas['is_fullbpaccess']) ? 0 : 1; 
+		$datas['supervisor_id'] 	= ($datas['supervisor_id']=='') ? NULL : $datas['supervisor_id']; 
+		
 		$datas['updated_by'] = $sess->user_id;
 		$datas['updated_at'] = date('Y-m-d H:i:s');
-		
 		if (! $this->system_model->updateUser($datas, ['id'=>$arg->id]))
 			$this->xresponse(FALSE, ['message' => $this->db->error()->message], 401);
 		
