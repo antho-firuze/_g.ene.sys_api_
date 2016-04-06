@@ -252,7 +252,7 @@ class System extends REST_Controller {
 		
 		$data = (object) $this->put();
 		
-		$fields = ['name', 'description', 'email'];
+		$fields = ['name', 'description', 'email', 'supervisor_id'];
 		foreach($fields as $f){
 			if (array_key_exists($f, $data)){
 				$datas[$f] = $data->{$f};
