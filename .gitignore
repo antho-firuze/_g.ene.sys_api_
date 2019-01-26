@@ -1,12 +1,18 @@
 .DS_Store
 
-application/cache/*
-!application/cache/index.html
-!application/cache/.htaccess
+__application/cache/*
+!__application/cache/index.html
 
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
+__application/logs/*
+!__application/logs/index.html
+
+!__application/*/.htaccess
+
+__tmp/*
+__application/views/backend/*/_cache/*
+__application/views/frontend/*/_cache/*
+
+composer.lock
 
 user_guide_src/build/*
 user_guide_src/cilexer/build/*
@@ -25,3 +31,5 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 *.stTheme.cache
 *.sublime-workspace
 *.sublime-project
+/tests/tests/
+/tests/results/
