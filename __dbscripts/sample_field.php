@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+$fields['id'] 	= ['type' => 'VARCHAR', 'constraint' => '255', 'null' => FALSE, 'unique' => TRUE];		// ID PRIMARY
 $fields['id'] 	= ['type' => 'INT', 'constraint' => '32', 'auto_increment' => TRUE];		// ID PRIMARY
 $fields['is_active'] 	= ['type' => 'CHAR', 'constraint' => '1', 'default' => '1'];
 $fields['created_at'] = ['type' => 'TIMESTAMP', 'null' => TRUE];

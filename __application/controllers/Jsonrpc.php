@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) {exit('No direct script access allowed');}
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Jsonrpc Class
@@ -309,8 +309,6 @@ class Jsonrpc extends CI_Controller
 		if (empty($request->method))
 			return $this->f->response(FALSE, ['message' => $this->f->lang('err_method_unknown', 'null'), 'id' => (isset($request->id) ? $request->id : null)], FALSE, FALSE);
 
-		$this->lang->load(['auth','simpi'], $request->idiom);
-		
 		// =================== Check is valid method ======================
 		$parseMethod = explode('.', $request->method);
 		if (count($parseMethod) < 2)

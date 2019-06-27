@@ -60,8 +60,7 @@ if (function_exists('ini_set')) {
 
 /* Define default path. Implement on $route['default_controller'] */
 $path_localhost = [
-	7000 => 'webapps',
-	7001 => 'jsonrpc',
+	7000 => 'jsonrpc',
 ];
 $path = [
 	'localhost' 			=> $path_localhost[$http_port],
@@ -76,8 +75,7 @@ define('API_URL', BASE_URL);
 
 // Prefix folder in application/model (for jsonrpc)
 $prefix_localhost = [
-	7000 => '',
-	7001 => 'api',
+	7000 => 'api',
 ];
 $prefix = [
 	'localhost' => $prefix_localhost[$http_port],
